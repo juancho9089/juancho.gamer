@@ -2,48 +2,75 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Wallpapers - @JUANCHO.GAMER</title>
+<title>Wallpapers - Juancho Gamer</title>
+
 <link rel="stylesheet" href="css/style.css">
+
+<!-- ICONOS -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
 </head>
 <body>
 
+<canvas id="particles"></canvas>
+
+<!-- NAVBAR -->
 <nav>
   <div class="logo">@JUANCHO.GAMER</div>
+
   <div class="nav-links">
     <a href="index.html">INICIO</a>
     <a href="software.html">SOFTWARE</a>
-    <a href="wallpapers.html" class="active">WALLPAPERS</a>
+    <a class="active" href="wallpapers.html">WALLPAPERS</a>
     <a href="proyectos.html">PROYECTOS</a>
     <a href="videos.html">VIDEOS</a>
     <a href="sobre.html">SOBRE</a>
   </div>
 </nav>
 
-<section>
-  <h1>Wallpapers</h1>
+<section class="page-section">
+  <h1 class="page-title">Wallpapers</h1>
 
   <div class="gallery">
 
+    <!-- CARD 1 -->
     <div class="card">
       <img src="images/wallpaper1.jpg">
       <div class="overlay">
-        <button class="view">👁</button>
-        <a href="images/wallpaper1.jpg" download class="download">⬇ Download</a>
+        <button class="icon-btn" onclick="openModal('images/wallpaper1.jpg')">
+          <i class="fa-solid fa-eye"></i>
+        </button>
+
+        <a href="images/wallpaper1.jpg" download class="download-btn">
+          <i class="fa-solid fa-download"></i> Download
+        </a>
       </div>
     </div>
 
+    <!-- CARD 2 -->
     <div class="card">
       <img src="images/wallpaper2.jpg">
       <div class="overlay">
-        <button class="view">👁</button>
-        <a href="images/wallpaper2.jpg" download class="download">⬇ Download</a>
+        <button class="icon-btn" onclick="openModal('images/wallpaper2.jpg')">
+          <i class="fa-solid fa-eye"></i>
+        </button>
+
+        <a href="images/wallpaper2.jpg" download class="download-btn">
+          <i class="fa-solid fa-download"></i> Download
+        </a>
       </div>
     </div>
 
   </div>
-
 </section>
 
+<!-- MODAL -->
+<div id="modal" class="modal">
+  <span class="close" onclick="closeModal()">&times;</span>
+  <img class="modal-content" id="modal-img">
+</div>
+
 <script src="js/main.js"></script>
+
 </body>
 </html>
