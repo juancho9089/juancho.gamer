@@ -578,3 +578,16 @@ canvas{
   opacity:1;
   transform:translateY(0);
 }
+
+/* ===== PORTADA DESTACADA ===== */
+
+.card.featured{
+  grid-column:span 2;
+  transform:scale(1.02);
+}
+
+@media(max-width:768px){
+  .card.featured{
+    grid-column:span 1;
+  }
+}

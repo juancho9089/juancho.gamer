@@ -82,12 +82,39 @@ function createCategoryButtons(){
 
   categoryBar.innerHTML="";
 
-  createButton("TODOS", "all", allImages.length);
+  const customOrder = ["anime","dark","games","autos"];
+
+  categories.sort((a,b)=>{
+    const indexA = customOrder.indexOf(a.name);
+    const indexB = customOrder.indexOf(b.name);
+
+    if(indexA === -1 && indexB === -1) return 0;
+    if(indexA === -1) return -1;
+    if(indexB === -1) return 1;
+
+    return indexA - indexB;
+  });
+
+  createButton("🌍 TODOS", "all", allImages.length);
 
   categories.forEach(cat=>{
     const count = allImages.filter(i=>i.category===cat.name).length;
-    createButton(cat.name.toUpperCase(), cat.name, count);
+    const icon = getCategoryIcon(cat.name);
+    createButton(`${icon} ${cat.name.toUpperCase()}`, cat.name, count);
   });
+}
+
+function getCategoryIcon(name){
+
+  const icons = {
+    anime: "🔥",
+    dark: "🌑",
+    games: "🎮",
+    autos: "🚗",
+    random: "🎲"
+  };
+
+  return icons[name] || "📁";
 }
 
 function createButton(text, category, count){
@@ -115,8 +142,10 @@ function updateActiveCategory(){
   });
 
   document.querySelectorAll(".category-btn").forEach(btn=>{
-    if(btn.innerText.startsWith(currentCategory.toUpperCase()) || 
-       (currentCategory==="all" && btn.innerText.startsWith("TODOS"))){
+    if(
+      (currentCategory==="all" && btn.innerText.includes("TODOS")) ||
+      btn.innerText.toLowerCase().includes(currentCategory)
+    ){
       btn.classList.add("active-category");
     }
   });
@@ -156,9 +185,14 @@ function renderGallery(images){
   images.forEach((img,index)=>{
 
     const showNew = currentCategory==="all" && index < 3;
+    const isFeatured = currentCategory!=="all" && index === 0;
 
     const card=document.createElement("div");
     card.className="card";
+
+    if(isFeatured){
+      card.classList.add("featured");
+    }
 
     card.innerHTML=`
       <img src="${img.url}" loading="lazy" class="wall-img">
@@ -301,9 +335,6 @@ if(searchInput){
 /* FAVORITOS */
 if(showFavoritesBtn){
   showFavoritesBtn.addEventListener("click",function(){
-
-    currentCategory="favorites";
-    updateActiveCategory();
 
     const favorites = JSON.parse(localStorage.getItem("favorites")) || [];
 
