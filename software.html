@@ -6,20 +6,7 @@
 
 <link rel="stylesheet" href="css/style.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-
 </head>
-
-<div id="softwareModal" class="modal">
-  <div class="modal-content">
-    <span class="close">&times;</span>
-    <img id="modalImage">
-    <h2 id="modalTitle"></h2>
-    <p id="modalDesc"></p>
-    <a id="modalDownload" target="_blank" class="modal-btn">
-      <i class="fa-solid fa-download"></i> Descargar
-    </a>
-  </div>
-</div>
 
 <body>
 
@@ -42,33 +29,24 @@
 <section>
   <h1>Software</h1>
 
-  <div class="gallery">
-
-    <div class="software-card">
-      <div class="software-banner">
-  <i class="fa-solid fa-microchip"></i>
-</div>
-
-      <div class="software-info">
-        <h3>Mantenimiento Ultra</h3>
-        <p>Versión 8.0</p>
-        <p class="desc">Optimización • Limpieza • Rendimiento</p>
-
-        <div class="software-buttons">           
-          <button class="view">
-          <i class="fa-solid fa-eye"></i> Ver
-          </button>
-          <a href="https://github.com/juancho9089/juancho.gamer/releases/download/v8.0/Mantenimiento_Ultra_v8.0.zip" class="download-btn">
-            <i class="fa-solid fa-download"></i>
-            <span>Descargar</span>
-          </a>
-        </div>
-      </div>
-    </div>
-
-  </div>
+  <div id="softwareGallery" class="gallery"></div>
 </section>
 
+<!-- MODAL -->
+<div id="softwareModal" class="modal">
+  <div class="modal-content">
+    <span class="close">&times;</span>
+    <img id="modalImage">
+    <h2 id="modalTitle"></h2>
+    <p id="modalDesc"></p>
+    <a id="modalDownload" target="_blank" class="modal-btn">
+      <i class="fa-solid fa-download"></i> Descargar
+    </a>
+  </div>
+</div>
+
+<script src="js/software.js"></script>
 <script src="js/main.js"></script>
+
 </body>
 </html>
