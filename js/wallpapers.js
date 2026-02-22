@@ -80,9 +80,9 @@ function renderGallery(images) {
     card.innerHTML = `
       <img src="${img.url}">
       <div class="overlay">
-        <a href="${img.url}" download="${img.name}" class="download-btn">
+        <button class="download-wallpaper" data-url="${img.url}" data-name="${img.name}">
           <i class="fa-solid fa-download"></i> Descargar
-        </a>
+        </button>
       </div>
     `;
 
@@ -91,3 +91,44 @@ function renderGallery(images) {
 }
 
 fetchCategories();
+
+document.addEventListener("click", async function(e){
+
+  if(e.target.closest(".download-wallpaper")){
+
+    const btn = e.target.closest(".download-wallpaper");
+    const url = btn.dataset.url;
+    const name = btn.dataset.name;
+
+    btn.innerText = "Descargando...";
+
+    try{
+      const response = await fetch(url);
+      const blob = await response.blob();
+
+      const blobUrl = window.URL.createObjectURL(blob);
+
+      const link = document.createElement("a");
+      link.href = blobUrl;
+      link.download = name;
+
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+
+      window.URL.revokeObjectURL(blobUrl);
+
+      btn.innerText = "✔ Descargado";
+
+      setTimeout(()=>{
+        btn.innerHTML = `<i class="fa-solid fa-download"></i> Descargar`;
+      },1500);
+
+    }catch(err){
+      btn.innerText = "Error";
+      console.error(err);
+    }
+
+  }
+
+});
