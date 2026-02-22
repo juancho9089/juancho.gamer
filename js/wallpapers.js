@@ -106,15 +106,24 @@ function createCategoryButtons(){
 
 function getCategoryIcon(name){
 
-  const icons = {
-    anime: "🔥",
-    dark: "🌑",
-    games: "🎮",
-    autos: "🚗",
-    random: "🎲"
-  };
+  const n = name.toLowerCase();
 
-  return icons[name] || "📁";
+  // Detectores inteligentes
+  if(n.includes("anime")) return "🔥";
+  if(n.includes("dark") || n.includes("black")) return "🌑";
+  if(n.includes("game") || n.includes("gaming")) return "🎮";
+  if(n.includes("auto") || n.includes("car") || n.includes("vehicle")) return "🚗";
+  if(n.includes("nature") || n.includes("forest") || n.includes("landscape")) return "🌿";
+  if(n.includes("space") || n.includes("galaxy") || n.includes("universe")) return "🌌";
+  if(n.includes("tech") || n.includes("cyber") || n.includes("code")) return "💻";
+  if(n.includes("wall")) return "🖼️";
+  if(n.includes("sport")) return "⚽";
+  if(n.includes("movie") || n.includes("cinema")) return "🎬";
+  if(n.includes("music")) return "🎵";
+  if(n.includes("random")) return "🎲";
+
+  // Icono por defecto
+  return "📁";
 }
 
 function createButton(text, category, count){
