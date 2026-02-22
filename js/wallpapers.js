@@ -9,56 +9,83 @@ const categoryBar = document.getElementById("categoryBar");
 let categories = [];
 let allImages = [];
 
+/* =========================
+   CARGAR CATEGORÍAS
+========================= */
+
 async function fetchCategories() {
+
+  gallery.innerHTML = "Cargando wallpapers...";
+
   const res = await fetch(
     `https://api.github.com/repos/${USER}/${REPO}/contents/${BASE_PATH}?ref=${BRANCH}`
   );
+
   const data = await res.json();
 
   categories = data.filter(item => item.type === "dir");
-  createCategoryButtons();
+
   await loadAllImages();
+  createCategoryButtons();
 }
 
+/* =========================
+   CARGAR TODAS LAS IMÁGENES
+========================= */
+
 async function loadAllImages() {
+
   allImages = [];
-  gallery.innerHTML = "Cargando...";
 
   for (const category of categories) {
+
     const res = await fetch(category.url);
     const files = await res.json();
 
     const images = files.filter(f => f.type === "file");
 
     images.forEach(img => {
+
       allImages.push({
         name: img.name,
         category: category.name,
         url: `https://raw.githubusercontent.com/${USER}/${REPO}/${BRANCH}/${BASE_PATH}/${category.name}/${img.name}`,
-        date: img.sha // usamos sha como pseudo orden de actualización
+        sha: img.sha
       });
+
     });
   }
 
-  // Ordenar por más reciente primero
-  allImages.sort((a, b) => b.date.localeCompare(a.date));
+  // Ordenar por más reciente
+  allImages.sort((a, b) => b.sha.localeCompare(a.sha));
 
   renderGallery(allImages);
 }
 
+/* =========================
+   CREAR BOTONES CATEGORÍA
+========================= */
+
 function createCategoryButtons() {
+
   categoryBar.innerHTML = "";
 
-  const allBtn = createButton(`TODOS`, () => renderGallery(allImages));
+  // TODOS
+  const allBtn = createButton(`TODOS (${allImages.length})`, () => {
+    renderGallery(allImages);
+  });
+  categoryBar.appendChild(allBtn);
+
+  // RANDOM
   const randomBtn = createButton("RANDOM", () => {
     const random = allImages[Math.floor(Math.random() * allImages.length)];
     renderGallery([random]);
   });
-
-  categoryBar.appendChild(allBtn);
   categoryBar.appendChild(randomBtn);
 
+  // CATEGORÍAS
   categories.forEach(cat => {
+
     const count = allImages.filter(img => img.category === cat.name).length;
 
     const btn = createButton(
@@ -75,21 +102,27 @@ function createCategoryButtons() {
 
 function createButton(text, onClick) {
   const btn = document.createElement("button");
-  btn.innerText = text;
   btn.classList.add("category-btn");
+  btn.innerText = text;
   btn.onclick = onClick;
   return btn;
 }
 
+/* =========================
+   RENDER GALERÍA
+========================= */
+
 function renderGallery(images) {
+
   gallery.style.opacity = "0";
 
   setTimeout(() => {
+
     gallery.innerHTML = "";
 
     images.forEach((img, index) => {
 
-      const isNew = index < 3; // Las 3 primeras son "NEW"
+      const isNew = index < 3;
 
       const card = document.createElement("div");
       card.className = "card";
@@ -98,7 +131,9 @@ function renderGallery(images) {
         <img src="${img.url}" loading="lazy">
         ${isNew ? '<div class="badge">NEW</div>' : ''}
         <div class="overlay">
-          <button class="download-wallpaper" data-url="${img.url}" data-name="${img.name}">
+          <button class="download-wallpaper"
+                  data-url="${img.url}"
+                  data-name="${img.name}">
             <i class="fa-solid fa-download"></i> Descargar
           </button>
         </div>
@@ -112,47 +147,53 @@ function renderGallery(images) {
   }, 200);
 }
 
-/* ===== DESCARGA CROSS DOMAIN ===== */
+/* =========================
+   DESCARGA FORZADA
+========================= */
 
 document.addEventListener("click", async function(e){
 
-  if(e.target.closest(".download-wallpaper")){
+  const btn = e.target.closest(".download-wallpaper");
 
-    const btn = e.target.closest(".download-wallpaper");
-    const url = btn.dataset.url;
-    const name = btn.dataset.name;
+  if(!btn) return;
 
-    btn.innerText = "Descargando...";
+  const url = btn.dataset.url;
+  const name = btn.dataset.name;
 
-    try{
-      const response = await fetch(url);
-      const blob = await response.blob();
+  btn.innerHTML = "Descargando...";
 
-      const blobUrl = window.URL.createObjectURL(blob);
+  try{
 
-      const link = document.createElement("a");
-      link.href = blobUrl;
-      link.download = name;
+    const response = await fetch(url);
+    const blob = await response.blob();
 
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
+    const blobUrl = window.URL.createObjectURL(blob);
 
-      window.URL.revokeObjectURL(blobUrl);
+    const link = document.createElement("a");
+    link.href = blobUrl;
+    link.download = name;
 
-      btn.innerText = "✔ Descargado";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
 
-      setTimeout(()=>{
-        btn.innerHTML = `<i class="fa-solid fa-download"></i> Descargar`;
-      },1500);
+    window.URL.revokeObjectURL(blobUrl);
 
-    }catch(err){
-      btn.innerText = "Error";
-      console.error(err);
-    }
+    btn.innerHTML = "✔ Descargado";
 
+    setTimeout(()=>{
+      btn.innerHTML = `<i class="fa-solid fa-download"></i> Descargar`;
+    },1500);
+
+  }catch(err){
+    btn.innerHTML = "Error";
+    console.error(err);
   }
 
 });
+
+/* =========================
+   INICIAR
+========================= */
 
 fetchCategories();
