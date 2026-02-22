@@ -1,3 +1,4 @@
+// PARTÍCULAS
 const canvas = document.getElementById("particles");
 const ctx = canvas.getContext("2d");
 
@@ -60,19 +61,9 @@ window.addEventListener("resize", function(){
   init();
 });
 
-/* MODAL */
-const modal = document.getElementById("modal");
-const modalImg = document.getElementById("modal-img");
-const images = document.querySelectorAll(".wall-img");
-const closeBtn = document.querySelector(".close");
-
-images.forEach(img => {
-  img.addEventListener("click", function(){
-    modal.style.display = "block";
-    modalImg.src = this.src;
+// BOTÓN WALLPAPERS
+document.getElementById("go-wallpapers").addEventListener("click", function(){
+  document.getElementById("wallpapers").scrollIntoView({
+    behavior: "smooth"
   });
 });
-
-closeBtn.onclick = function(){
-  modal.style.display = "none";
-}
