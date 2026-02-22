@@ -18,6 +18,38 @@ h1{
   margin-bottom:40px;
 }
 
+/* TARJETA DE VERSION */
+.version-card{
+  background:#111;
+  border:1px solid #00ffcc;
+  width:300px;
+  margin:30px auto;
+  padding:20px;
+  border-radius:12px;
+  box-shadow:0 0 25px rgba(0,255,204,0.3);
+  transition:0.3s;
+}
+
+.version-card:hover{
+  box-shadow:0 0 35px rgba(0,255,204,0.6);
+}
+
+.version-card h3{
+  margin:0;
+  color:#00ffcc;
+}
+
+.version-number{
+  font-size:28px;
+  margin:10px 0;
+  font-weight:bold;
+}
+
+.version-date{
+  color:#aaa;
+  font-size:14px;
+}
+
 .buttons{
   margin-bottom:80px;
 }
