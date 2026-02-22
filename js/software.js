@@ -9,13 +9,25 @@ async function init(){
 
   gallery.innerHTML = "Cargando software...";
 
-  const res = await fetch(
-    `https://api.github.com/repos/${USER}/${REPO}/releases`
-  );
+  try{
 
-  const releases = await res.json();
+    const res = await fetch(
+      `https://api.github.com/repos/${USER}/${REPO}/releases`
+    );
 
-  renderSoftware(releases);
+    const releases = await res.json();
+
+    if(!Array.isArray(releases) || releases.length === 0){
+      gallery.innerHTML = "No hay releases disponibles.";
+      return;
+    }
+
+    renderSoftware(releases);
+
+  }catch(err){
+    console.error(err);
+    gallery.innerHTML = "Error cargando software.";
+  }
 }
 
 function renderSoftware(releases){
@@ -26,28 +38,25 @@ function renderSoftware(releases){
 
     const isNew = index === 0;
 
-    if(!release.assets || release.assets.length === 0) return;
-
-    const zipAssets = release.assets.filter(a =>
-      a.name.endsWith(".zip") || a.name.endsWith(".rar")
+    // 🔥 FILTRAMOS SOLO ARCHIVOS REALES
+    const realAssets = release.assets.filter(asset =>
+      !asset.name.toLowerCase().includes("source code")
     );
 
-    if(zipAssets.length === 0) return;
-
-    const isMultipart = zipAssets.length > 1;
+    if(realAssets.length === 0) return;
 
     const card = document.createElement("div");
     card.className = "software-card";
 
     let downloadButtons = "";
 
-    zipAssets.forEach((asset,i)=>{
+    realAssets.forEach((asset,i)=>{
       downloadButtons += `
-        <a href="${asset.browser_download_url}" 
-           class="download-btn" 
+        <a href="${asset.browser_download_url}"
+           class="download-btn"
            target="_blank">
            <i class="fa-solid fa-download"></i>
-           <span>${isMultipart ? "Parte " + (i+1) : "Descargar"}</span>
+           <span>${realAssets.length > 1 ? "Parte " + (i+1) : "Descargar"}</span>
         </a>
       `;
     });
@@ -67,13 +76,6 @@ function renderSoftware(releases){
           ${release.body ? release.body : "Nueva versión disponible"}
         </p>
 
-        ${isMultipart ? 
-          `<p style="color:#ffcc00;font-size:13px;margin-top:10px;">
-            ⚠ Este archivo está dividido en ${zipAssets.length} partes.
-            Descarga todas y extrae la Parte 1.
-          </p>` : ''
-        }
-
         <div class="software-buttons">
           <button class="view"
             data-title="${release.name}"
@@ -91,9 +93,7 @@ function renderSoftware(releases){
   });
 }
 
-/* ========================== */
 /* MODAL */
-/* ========================== */
 
 document.addEventListener("click", function(e){
 
