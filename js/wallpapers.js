@@ -5,9 +5,16 @@ const BASE_PATH = "images";
 
 const gallery = document.getElementById("gallery");
 const categoryBar = document.getElementById("categoryBar");
+const searchInput = document.getElementById("searchInput");
 
 let categories = [];
 let allImages = [];
+
+/* =========================
+   INICIO
+========================= */
+
+fetchCategories();
 
 /* =========================
    CARGAR CATEGORÍAS
@@ -15,14 +22,11 @@ let allImages = [];
 
 async function fetchCategories() {
 
-  gallery.innerHTML = "Cargando wallpapers...";
-
   const res = await fetch(
     `https://api.github.com/repos/${USER}/${REPO}/contents/${BASE_PATH}?ref=${BRANCH}`
   );
 
   const data = await res.json();
-
   categories = data.filter(item => item.type === "dir");
 
   await loadAllImages();
@@ -30,7 +34,7 @@ async function fetchCategories() {
 }
 
 /* =========================
-   CARGAR TODAS LAS IMÁGENES
+   CARGAR IMÁGENES
 ========================= */
 
 async function loadAllImages() {
@@ -45,45 +49,39 @@ async function loadAllImages() {
     const images = files.filter(f => f.type === "file");
 
     images.forEach(img => {
-
       allImages.push({
         name: img.name,
         category: category.name,
         url: `https://raw.githubusercontent.com/${USER}/${REPO}/${BRANCH}/${BASE_PATH}/${category.name}/${img.name}`,
         sha: img.sha
       });
-
     });
   }
 
-  // Ordenar por más reciente
   allImages.sort((a, b) => b.sha.localeCompare(a.sha));
-
   renderGallery(allImages);
 }
 
 /* =========================
-   CREAR BOTONES CATEGORÍA
+   BOTONES CATEGORÍAS
 ========================= */
 
 function createCategoryButtons() {
 
   categoryBar.innerHTML = "";
 
-  // TODOS
   const allBtn = createButton(`TODOS (${allImages.length})`, () => {
     renderGallery(allImages);
   });
-  categoryBar.appendChild(allBtn);
 
-  // RANDOM
   const randomBtn = createButton("RANDOM", () => {
     const random = allImages[Math.floor(Math.random() * allImages.length)];
     renderGallery([random]);
   });
+
+  categoryBar.appendChild(allBtn);
   categoryBar.appendChild(randomBtn);
 
-  // CATEGORÍAS
   categories.forEach(cat => {
 
     const count = allImages.filter(img => img.category === cat.name).length;
@@ -100,7 +98,7 @@ function createCategoryButtons() {
   });
 }
 
-function createButton(text, onClick) {
+function createButton(text, onClick){
   const btn = document.createElement("button");
   btn.classList.add("category-btn");
   btn.innerText = text;
@@ -112,28 +110,28 @@ function createButton(text, onClick) {
    RENDER GALERÍA
 ========================= */
 
-function renderGallery(images) {
+function renderGallery(images){
 
   gallery.style.opacity = "0";
 
-  setTimeout(() => {
+  setTimeout(()=>{
 
     gallery.innerHTML = "";
 
-    images.forEach((img, index) => {
+    images.forEach((img,index)=>{
 
       const isNew = index < 3;
 
       const card = document.createElement("div");
-      card.className = "card";
+      card.className = "card reveal";
 
       card.innerHTML = `
         <img src="${img.url}" loading="lazy">
         ${isNew ? '<div class="badge">NEW</div>' : ''}
         <div class="overlay">
           <button class="download-wallpaper"
-                  data-url="${img.url}"
-                  data-name="${img.name}">
+            data-url="${img.url}"
+            data-name="${img.name}">
             <i class="fa-solid fa-download"></i> Descargar
           </button>
         </div>
@@ -143,8 +141,9 @@ function renderGallery(images) {
     });
 
     gallery.style.opacity = "1";
+    applyReveal();
 
-  }, 200);
+  },200);
 }
 
 /* =========================
@@ -154,7 +153,6 @@ function renderGallery(images) {
 document.addEventListener("click", async function(e){
 
   const btn = e.target.closest(".download-wallpaper");
-
   if(!btn) return;
 
   const url = btn.dataset.url;
@@ -163,7 +161,6 @@ document.addEventListener("click", async function(e){
   btn.innerHTML = "Descargando...";
 
   try{
-
     const response = await fetch(url);
     const blob = await response.blob();
 
@@ -185,15 +182,53 @@ document.addEventListener("click", async function(e){
       btn.innerHTML = `<i class="fa-solid fa-download"></i> Descargar`;
     },1500);
 
-  }catch(err){
+  }catch{
     btn.innerHTML = "Error";
-    console.error(err);
   }
-
 });
 
 /* =========================
-   INICIAR
+   BUSCADOR
 ========================= */
 
-fetchCategories();
+if(searchInput){
+  searchInput.addEventListener("input", function(){
+    const value = this.value.toLowerCase();
+
+    const filtered = allImages.filter(img =>
+      img.name.toLowerCase().includes(value)
+    );
+
+    renderGallery(filtered);
+  });
+}
+
+/* =========================
+   SCROLL REVEAL
+========================= */
+
+const observer = new IntersectionObserver(entries=>{
+  entries.forEach(entry=>{
+    if(entry.isIntersecting){
+      entry.target.classList.add("active");
+    }
+  });
+});
+
+function applyReveal(){
+  document.querySelectorAll(".reveal").forEach(el=>{
+    observer.observe(el);
+  });
+}
+
+/* =========================
+   LOADER
+========================= */
+
+window.addEventListener("load",()=>{
+  const loader = document.getElementById("loader");
+  if(loader){
+    loader.style.opacity="0";
+    setTimeout(()=>loader.remove(),500);
+  }
+});

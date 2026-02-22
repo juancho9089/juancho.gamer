@@ -359,43 +359,14 @@ canvas{
   box-shadow:0 0 25px #00ff88;
 }
 
+/* ===== CATEGORÍAS ===== */
+
 .category-bar{
   display:flex;
   gap:15px;
   justify-content:center;
   margin-bottom:40px;
-}
-
-.category-btn{
-  background:#111;
-  color:#00ffcc;
-  border:1px solid #00ffcc;
-  padding:10px 20px;
-  border-radius:8px;
-  cursor:pointer;
-  transition:0.3s;
-  font-weight:bold;
-}
-
-.category-btn:hover{
-  background:#00ffcc;
-  color:#000;
-}
-
-.badge{
-  position:absolute;
-  top:10px;
-  left:10px;
-  background:#00ffcc;
-  color:#000;
-  font-size:12px;
-  font-weight:bold;
-  padding:4px 8px;
-  border-radius:6px;
-}
-
-.gallery{
-  transition:opacity 0.3s ease;
+  flex-wrap:wrap;
 }
 
 .category-btn{
@@ -407,6 +378,7 @@ canvas{
   cursor:pointer;
   transition:0.3s;
   font-weight:bold;
+  letter-spacing:1px;
 }
 
 .category-btn:hover{
@@ -414,6 +386,8 @@ canvas{
   color:#000;
   box-shadow:0 0 15px #00ffcc;
 }
+
+/* ===== BADGE NEW ===== */
 
 .badge{
   position:absolute;
@@ -425,8 +399,75 @@ canvas{
   font-weight:bold;
   padding:4px 8px;
   border-radius:6px;
+  box-shadow:0 0 10px #00ffcc;
 }
+
+/* ===== TRANSICIÓN GALERÍA ===== */
 
 .gallery{
   transition:opacity 0.3s ease;
+}
+
+/* ===== LOADER ===== */
+
+.loader{
+  position:fixed;
+  inset:0;
+  background:#000;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  z-index:3000;
+}
+
+.loader span{
+  width:20px;
+  height:20px;
+  margin:5px;
+  background:#00ffcc;
+  border-radius:50%;
+  animation: bounce 0.6s infinite alternate;
+}
+
+.loader span:nth-child(2){ animation-delay:0.2s; }
+.loader span:nth-child(3){ animation-delay:0.4s; }
+
+@keyframes bounce{
+  to{ transform:translateY(-15px); }
+}
+
+/* ===== SCROLL REVEAL ===== */
+
+.reveal{
+  opacity:0;
+  transform:translateY(30px);
+  transition:0.6s ease;
+}
+
+.reveal.active{
+  opacity:1;
+  transform:translateY(0);
+}
+
+/* ===== SPOTLIGHT HOVER ===== */
+
+.card{
+  position:relative;
+  overflow:hidden;
+}
+
+.card::before{
+  content:"";
+  position:absolute;
+  width:200%;
+  height:200%;
+  top:-50%;
+  left:-50%;
+  background:radial-gradient(circle at center, rgba(0,255,204,0.2), transparent 60%);
+  opacity:0;
+  transition:0.4s;
+}
+
+.card:hover::before{
+  opacity:1;
 }
