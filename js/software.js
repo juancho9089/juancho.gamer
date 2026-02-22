@@ -46,25 +46,6 @@ async function init(){
 }
 
 /* ========================= */
-/* ICONOS AUTOMÁTICOS */
-/* ========================= */
-
-function getCategoryIcon(name){
-
-  const icons = {
-    utilidad: "🛠",
-    herramienta: "🧰",
-    juego: "🎮",
-    game: "🎮",
-    autos: "🚗",
-    editor: "✏",
-    general: "📦"
-  };
-
-  return icons[name] || "💾";
-}
-
-/* ========================= */
 /* CATEGORÍAS */
 /* ========================= */
 
@@ -74,13 +55,11 @@ function createCategories(){
 
   const categories = [...new Set(allSoftware.map(s=>s.category))];
 
-  createButton("🌍 TODOS", "all");
+  createButton("TODOS", "all");
 
   categories.forEach(cat=>{
-    createButton(`${getCategoryIcon(cat)} ${cat.toUpperCase()}`, cat);
+    createButton(cat.toUpperCase(), cat);
   });
-
-  updateActive();
 }
 
 function createButton(text, category){
@@ -101,10 +80,10 @@ function createButton(text, category){
 function updateActive(){
   document.querySelectorAll(".category-btn").forEach(btn=>{
     btn.classList.remove("active-category");
-    if(btn.innerText.toLowerCase().includes(currentCategory)){
+    if(btn.innerText.toLowerCase()===currentCategory){
       btn.classList.add("active-category");
     }
-    if(currentCategory==="all" && btn.innerText.includes("TODOS")){
+    if(currentCategory==="all" && btn.innerText==="TODOS"){
       btn.classList.add("active-category");
     }
   });
@@ -130,7 +109,7 @@ function renderGallery(data){
   data.forEach(software=>{
 
     const card=document.createElement("div");
-    card.className="software-card reveal";
+    card.className="software-card";
 
     card.innerHTML=`
 
