@@ -59,3 +59,20 @@ window.addEventListener("resize", function(){
   canvas.height = window.innerHeight;
   init();
 });
+
+/* MODAL */
+const modal = document.getElementById("modal");
+const modalImg = document.getElementById("modal-img");
+const images = document.querySelectorAll(".wall-img");
+const closeBtn = document.querySelector(".close");
+
+images.forEach(img => {
+  img.addEventListener("click", function(){
+    modal.style.display = "block";
+    modalImg.src = this.src;
+  });
+});
+
+closeBtn.onclick = function(){
+  modal.style.display = "none";
+}
