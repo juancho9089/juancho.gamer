@@ -541,3 +541,40 @@ canvas{
   cursor:pointer;
 }
 
+/* ===================================== */
+/* CATEGORÍA ACTIVA PRO */
+/* ===================================== */
+
+.category-btn.active-category{
+  background:#00ffcc;
+  color:#000;
+  box-shadow:0 0 20px #00ffcc;
+  transform:translateY(-2px);
+}
+
+/* Animación al hacer click */
+.category-btn{
+  transition:all 0.25s ease;
+}
+
+.category-btn:active{
+  transform:scale(0.95);
+}
+
+/* ===================================== */
+/* TRANSICIÓN SUAVE MEJORADA GALERÍA */
+/* ===================================== */
+
+.gallery{
+  transition:opacity 0.35s ease, transform 0.35s ease;
+}
+
+.gallery.fade-out{
+  opacity:0;
+  transform:translateY(10px);
+}
+
+.gallery.fade-in{
+  opacity:1;
+  transform:translateY(0);
+}
