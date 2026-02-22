@@ -471,3 +471,7 @@ canvas{
 .card:hover::before{
   opacity:1;
 }
+
+#searchInput:focus{
+  box-shadow:0 0 15px #00ffcc;
+}
