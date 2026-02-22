@@ -480,17 +480,17 @@ canvas{
 .resolution{
   position:absolute;
   bottom:15px;
-  left:50%;
-  transform:translateX(-50%);
-  padding:6px 14px;
+  left:15px;
+  padding:6px 12px;
   font-size:12px;
   font-weight:bold;
   border-radius:20px;
   letter-spacing:1px;
-  box-shadow:0 0 15px rgba(0,255,204,0.6);
+  border:2px solid #000; /* 👈 borde negro fino */
+  box-shadow:0 0 10px rgba(0,0,0,0.6);
 }
 
-/* Colores dinámicos */
+/* Colores */
 .res-4k{ background:gold; color:#000; }
 .res-2k{ background:#00ffcc; color:#000; }
 .res-1080{ background:#00ff88; color:#000; }

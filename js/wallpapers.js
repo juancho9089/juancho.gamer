@@ -5,6 +5,8 @@ const BASE_PATH = "images";
 
 const gallery = document.getElementById("gallery");
 const categoryBar = document.getElementById("categoryBar");
+const searchInput = document.getElementById("searchInput");
+const showFavoritesBtn = document.getElementById("showFavoritesBtn");
 
 let categories = [];
 let allImages = [];
@@ -68,6 +70,7 @@ async function loadImages(){
     });
   }
 
+  // Ordenar por SHA para que los más recientes salgan primero
   allImages.sort((a,b)=> b.sha.localeCompare(a.sha));
 }
 
@@ -80,17 +83,6 @@ function createCategoryButtons(){
   allBtn.innerText=`TODOS (${allImages.length})`;
   allBtn.onclick=()=>renderGallery(allImages);
   categoryBar.appendChild(allBtn);
-
-  categories.forEach(cat=>{
-    const count = allImages.filter(i=>i.category===cat.name).length;
-    const btn=document.createElement("button");
-    btn.className="category-btn";
-    btn.innerText=`${cat.name.toUpperCase()} (${count})`;
-    btn.onclick=()=>renderGallery(
-      allImages.filter(i=>i.category===cat.name)
-    );
-    categoryBar.appendChild(btn);
-  });
 }
 
 function renderGallery(images){
@@ -99,23 +91,31 @@ function renderGallery(images){
 
   images.forEach((img,index)=>{
 
+    const isNew = index < 3;
+
     const card=document.createElement("div");
     card.className="card";
 
     card.innerHTML=`
       <img src="${img.url}" loading="lazy" class="wall-img">
+
+      ${isNew ? '<div class="badge">NEW</div>' : ''}
+
       <button class="favorite-btn" data-url="${img.url}">
         <i class="fa-solid fa-heart"></i>
       </button>
+
       <div class="resolution">...</div>
+
       <div class="overlay">
         <button class="view-wallpaper" data-url="${img.url}">
-          <i class="fa-solid fa-eye"></i>
+          <i class="fa-solid fa-eye"></i> Ver
         </button>
+
         <button class="download-wallpaper"
           data-url="${img.url}"
           data-name="${img.name}">
-          <i class="fa-solid fa-download"></i>
+          <i class="fa-solid fa-download"></i> Descargar
         </button>
       </div>
     `;
@@ -157,6 +157,8 @@ function renderGallery(images){
     }
   });
 }
+
+/* EVENTOS */
 
 document.addEventListener("click", async function(e){
 
@@ -205,6 +207,7 @@ document.addEventListener("click", async function(e){
   }
 });
 
+/* FULLSCREEN CLOSE */
 document.getElementById("closeFullscreen").onclick=function(){
   document.getElementById("fullscreenModal").style.display="none";
 };
@@ -214,3 +217,31 @@ document.getElementById("fullscreenModal").onclick=function(e){
     this.style.display="none";
   }
 };
+
+/* BUSCADOR */
+if(searchInput){
+  searchInput.addEventListener("input",function(){
+
+    const value=this.value.toLowerCase();
+
+    const filtered=allImages.filter(img=>
+      img.name.toLowerCase().includes(value)
+    );
+
+    renderGallery(filtered);
+  });
+}
+
+/* VER FAVORITOS */
+if(showFavoritesBtn){
+  showFavoritesBtn.addEventListener("click",function(){
+
+    const favorites = JSON.parse(localStorage.getItem("favorites")) || [];
+
+    const filtered = allImages.filter(img =>
+      favorites.includes(img.url)
+    );
+
+    renderGallery(filtered);
+  });
+}

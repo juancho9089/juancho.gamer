@@ -30,7 +30,7 @@
   <h1>Wallpapers</h1>
 
   <!-- BUSCADOR -->
-  <div style="margin-bottom:30px;">
+  <div style="margin-bottom:20px;">
     <input type="text"
            id="searchInput"
            placeholder="🔎 Buscar wallpaper..."
@@ -42,18 +42,30 @@
              color:#00ffcc;
              width:300px;
              outline:none;
-             font-weight:bold;
-           ">
+             font-weight:bold;">
   </div>
 
-  <!-- CATEGORÍAS -->
-  <div id="categoryBar" class="category-bar"></div>
+  <!-- BOTÓN FAVORITOS -->
+  <div style="margin-bottom:30px;">
+    <button id="showFavoritesBtn"
+      style="
+        padding:10px 20px;
+        border-radius:8px;
+        border:1px solid #00ffcc;
+        background:#111;
+        color:#00ffcc;
+        cursor:pointer;
+        font-weight:bold;">
+      ❤️ Ver Favoritos
+    </button>
+  </div>
 
-  <!-- GALERÍA -->
+  <div id="categoryBar" class="category-bar"></div>
   <div id="gallery" class="gallery"></div>
+
 </section>
 
-<!-- FULLSCREEN (debe ir antes de cerrar body) -->
+<!-- FULLSCREEN -->
 <div class="fullscreen-modal" id="fullscreenModal">
   <span id="closeFullscreen">&times;</span>
   <img id="fullscreenImage">
