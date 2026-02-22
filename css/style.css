@@ -16,42 +16,22 @@ nav{
   position:fixed;
   top:0;
   width:100%;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  padding:20px 60px;
-  background:rgba(0,0,0,0.85);
+  background:rgba(0,0,0,0.9);
   border-bottom:1px solid #00ffcc;
   z-index:1000;
+  text-align:center;
+  padding:15px 0;
 }
 
 .logo{
-  font-size:20px;
-  font-weight:bold;
-  color:#00ffcc;
-  animation: glow 2.5s ease-in-out infinite alternate;
+  display:block;
+  margin-bottom:10px;
 }
 
-@keyframes glow{
-  from{
-    text-shadow:0 0 5px #00ffcc;
-  }
-  to{
-    text-shadow:0 0 20px #00ffcc, 0 0 30px #00ffcc;
-  }
-}
-
-.nav-links a{
-  text-decoration:none;
-  color:#aaa;
-  margin-left:30px;
-  transition:0.3s;
-  font-size:14px;
-  letter-spacing:1px;
-}
-
-.nav-links a:hover{
-  color:#00ffcc;
+.nav-links{
+  display:flex;
+  justify-content:center;
+  gap:40px;
 }
 
 .nav-links a.active{
