@@ -5,14 +5,10 @@
 <title>Wallpapers - @JUANCHO.GAMER</title>
 
 <link rel="stylesheet" href="css/style.css">
-
-<!-- ICONOS -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-
 </head>
 <body>
 
-<!-- ===== NAVBAR ===== -->
 <nav>
   <div class="logo">
     <img src="images/logo.png">
@@ -29,63 +25,17 @@
   </div>
 </nav>
 
-<!-- ===== SECCION ===== -->
 <section>
-
   <h1>Wallpapers</h1>
 
-  <div class="gallery">
+  <!-- CATEGORÍAS -->
+  <div id="categoryBar" class="category-bar"></div>
 
-    <!-- WALLPAPER 1 -->
-    <div class="card">
-
-      <img src="images/wallpaper1.jpg">
-
-      <div class="overlay">
-
-        <button class="view">
-          <i class="fa-solid fa-eye"></i>
-        </button>
-
-        <a href="images/wallpaper1.jpg"
-           download="wallpaper1.jpg"
-           class="download-btn">
-          <i class="fa-solid fa-download"></i>
-          <span>Descargar</span>
-        </a>
-
-      </div>
-
-    </div>
-
-
-    <!-- WALLPAPER 2 -->
-    <div class="card">
-
-      <img src="images/wallpaper2.jpg">
-
-      <div class="overlay">
-
-        <button class="view">
-          <i class="fa-solid fa-eye"></i>
-        </button>
-
-        <a href="images/wallpaper2.jpg"
-           download="wallpaper2.jpg"
-           class="download-btn">
-          <i class="fa-solid fa-download"></i>
-          <span>Descargar</span>
-        </a>
-
-      </div>
-
-    </div>
-
-  </div>
-
+  <!-- GALERÍA -->
+  <div id="gallery" class="gallery"></div>
 </section>
 
 <script src="js/main.js"></script>
-
+<script src="js/wallpapers.js"></script>
 </body>
 </html>
