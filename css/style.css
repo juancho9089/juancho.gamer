@@ -4,90 +4,73 @@ html{
 
 body{
   margin:0;
-  background: radial-gradient(circle at top, #111, #000);
+  background:#000;
   color:white;
   font-family: Arial, sans-serif;
+}
+
+/* NAVBAR */
+nav{
+  position:fixed;
+  top:0;
+  width:100%;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:20px 50px;
+  background:rgba(0,0,0,0.9);
+  border-bottom:1px solid #00ffcc;
+  z-index:100;
+}
+
+.logo{
+  color:#00ffcc;
+  font-weight:bold;
+  font-size:20px;
+  text-shadow:0 0 10px #00ffcc;
+}
+
+.nav-links a{
+  color:white;
+  text-decoration:none;
+  margin-left:25px;
+  transition:0.3s;
+}
+
+.nav-links a:hover,
+.nav-links a.active{
+  color:#00ffcc;
+  text-shadow:0 0 10px #00ffcc;
+}
+
+/* CONTENIDO */
+section{
+  margin-top:140px;
+  padding:40px;
   text-align:center;
 }
 
-canvas{
-  position:fixed;
-  top:0;
-  left:0;
-  width:100%;
-  height:100%;
-  z-index:-1;
-}
-
-h1{
-  font-size:50px;
-  margin-top:80px;
-  color:#00ffcc;
-  text-shadow:0 0 20px #00ffcc;
-}
-
-.subtitle{
-  color:#aaa;
-  margin-bottom:40px;
-}
-
-/* TARJETA VERSION */
-.version-card{
-  background:#111;
-  border:1px solid #00ffcc;
-  width:300px;
-  margin:30px auto;
-  padding:20px;
-  border-radius:12px;
-  box-shadow:0 0 25px rgba(0,255,204,0.3);
-}
-
-.version-card h3{
-  margin:0;
-  color:#00ffcc;
-}
-
-.version-number{
-  font-size:28px;
-  margin:10px 0;
-  font-weight:bold;
-}
-
-.version-date{
-  color:#aaa;
-  font-size:14px;
-}
-
-.buttons{
-  margin-bottom:80px;
-}
-
+/* BOTONES */
 .btn{
   display:inline-block;
   padding:15px 30px;
-  margin:15px;
+  margin:20px;
   background:#00ffcc;
   color:#000;
   text-decoration:none;
   font-weight:bold;
   border-radius:8px;
   transition:0.3s;
-  cursor:pointer;
 }
 
 .btn:hover{
-  background:#00ccaa;
   box-shadow:0 0 20px #00ffcc;
 }
 
-section{
-  margin-top:150px;
-  padding-top:100px;
-}
-
+/* GALERÍA */
 .wallpapers img{
   width:250px;
-  margin:15px;
+  margin:20px;
   border-radius:10px;
   transition:0.3s;
 }
@@ -97,9 +80,12 @@ section{
   box-shadow:0 0 20px #00ffcc;
 }
 
-footer{
-  margin-top:100px;
-  padding:20px;
-  color:#666;
-  font-size:14px;
+/* CANVAS */
+canvas{
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  z-index:-1;
 }
