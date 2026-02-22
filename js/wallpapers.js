@@ -1,7 +1,3 @@
-/* ===================================
-   CONFIG
-=================================== */
-
 const USER = "juancho9089";
 const REPO = "juancho.gamer";
 const BRANCH = "main";
@@ -9,14 +5,9 @@ const BASE_PATH = "images";
 
 const gallery = document.getElementById("gallery");
 const categoryBar = document.getElementById("categoryBar");
-const searchInput = document.getElementById("searchInput");
 
 let categories = [];
 let allImages = [];
-
-/* ===================================
-   INICIO
-=================================== */
 
 init();
 
@@ -38,58 +29,40 @@ async function init(){
   await fetchCategories();
 }
 
-/* ===================================
-   CARGAR CATEGORÍAS
-=================================== */
-
 async function fetchCategories(){
 
-  try{
+  const res = await fetch(
+    `https://api.github.com/repos/${USER}/${REPO}/contents/${BASE_PATH}?ref=${BRANCH}`
+  );
 
-    const res = await fetch(
-      `https://api.github.com/repos/${USER}/${REPO}/contents/${BASE_PATH}?ref=${BRANCH}`
-    );
+  const data = await res.json();
+  categories = data.filter(item => item.type === "dir");
 
-    if(!res.ok) throw new Error("GitHub API limit reached");
+  await loadImages();
 
-    const data = await res.json();
-    categories = data.filter(item => item.type === "dir");
+  localStorage.setItem("wallpaperCache", JSON.stringify({
+    categories,
+    images: allImages
+  }));
 
-    await loadAllImages();
-    createCategoryButtons();
-    renderGallery(allImages);
-
-    localStorage.setItem("wallpaperCache", JSON.stringify({
-      categories: categories,
-      images: allImages
-    }));
-
-  }catch(err){
-    gallery.innerHTML = "⚠ GitHub está descansando...";
-    console.error(err);
-  }
+  createCategoryButtons();
+  renderGallery(allImages);
 }
 
-/* ===================================
-   CARGAR IMÁGENES
-=================================== */
-
-async function loadAllImages(){
+async function loadImages(){
 
   allImages = [];
 
-  for(const category of categories){
+  for(const cat of categories){
 
-    const res = await fetch(category.url);
+    const res = await fetch(cat.url);
     const files = await res.json();
 
-    const images = files.filter(f => f.type === "file");
-
-    images.forEach(img=>{
+    files.filter(f=>f.type==="file").forEach(img=>{
       allImages.push({
         name: img.name,
-        category: category.name,
-        url: `https://raw.githubusercontent.com/${USER}/${REPO}/${BRANCH}/${BASE_PATH}/${category.name}/${img.name}`,
+        category: cat.name,
+        url: `https://raw.githubusercontent.com/${USER}/${REPO}/${BRANCH}/${BASE_PATH}/${cat.name}/${img.name}`,
         sha: img.sha
       });
     });
@@ -98,53 +71,27 @@ async function loadAllImages(){
   allImages.sort((a,b)=> b.sha.localeCompare(a.sha));
 }
 
-/* ===================================
-   BOTONES CATEGORÍA
-=================================== */
-
 function createCategoryButtons(){
 
-  categoryBar.innerHTML = "";
+  categoryBar.innerHTML="";
 
-  const allBtn = createButton(`TODOS (${allImages.length})`, ()=>{
-    renderGallery(allImages);
-  });
-
-  const randomBtn = createButton("RANDOM", ()=>{
-    const random = allImages[Math.floor(Math.random()*allImages.length)];
-    renderGallery([random]);
-  });
-
+  const allBtn = document.createElement("button");
+  allBtn.className="category-btn";
+  allBtn.innerText=`TODOS (${allImages.length})`;
+  allBtn.onclick=()=>renderGallery(allImages);
   categoryBar.appendChild(allBtn);
-  categoryBar.appendChild(randomBtn);
 
   categories.forEach(cat=>{
-
-    const count = allImages.filter(img=>img.category===cat.name).length;
-
-    const btn = createButton(
-      `${cat.name.toUpperCase()} (${count})`,
-      ()=>{
-        const filtered = allImages.filter(img=>img.category===cat.name);
-        renderGallery(filtered);
-      }
+    const count = allImages.filter(i=>i.category===cat.name).length;
+    const btn=document.createElement("button");
+    btn.className="category-btn";
+    btn.innerText=`${cat.name.toUpperCase()} (${count})`;
+    btn.onclick=()=>renderGallery(
+      allImages.filter(i=>i.category===cat.name)
     );
-
     categoryBar.appendChild(btn);
   });
 }
-
-function createButton(text,click){
-  const btn=document.createElement("button");
-  btn.classList.add("category-btn");
-  btn.innerText=text;
-  btn.onclick=click;
-  return btn;
-}
-
-/* ===================================
-   RENDER
-=================================== */
 
 function renderGallery(images){
 
@@ -152,26 +99,19 @@ function renderGallery(images){
 
   images.forEach((img,index)=>{
 
-    const isNew = index < 3;
-
     const card=document.createElement("div");
     card.className="card";
 
     card.innerHTML=`
       <img src="${img.url}" loading="lazy" class="wall-img">
-      ${isNew?'<div class="badge">NEW</div>':''}
-
       <button class="favorite-btn" data-url="${img.url}">
         <i class="fa-solid fa-heart"></i>
       </button>
-
       <div class="resolution">...</div>
-
       <div class="overlay">
         <button class="view-wallpaper" data-url="${img.url}">
           <i class="fa-solid fa-eye"></i>
         </button>
-
         <button class="download-wallpaper"
           data-url="${img.url}"
           data-name="${img.name}">
@@ -182,26 +122,41 @@ function renderGallery(images){
 
     gallery.appendChild(card);
 
-    // Resolución automática
     const imgElement = card.querySelector(".wall-img");
     const resolutionLabel = card.querySelector(".resolution");
 
-    imgElement.onload = function(){
-      resolutionLabel.innerText =
-        this.naturalWidth + "x" + this.naturalHeight;
-    };
+    function setResolution(){
 
-    // Favoritos guardados
+      const width = imgElement.naturalWidth;
+      let label = "";
+      let className = "";
+
+      if(width >= 3840){
+        label="4K"; className="res-4k";
+      }else if(width >= 2560){
+        label="2K"; className="res-2k";
+      }else if(width >= 1920){
+        label="1080p"; className="res-1080";
+      }else{
+        label="HD"; className="res-hd";
+      }
+
+      resolutionLabel.innerText = label;
+      resolutionLabel.classList.add(className);
+    }
+
+    if(imgElement.complete){
+      setResolution();
+    }else{
+      imgElement.onload=setResolution;
+    }
+
     const favorites = JSON.parse(localStorage.getItem("favorites")) || [];
     if(favorites.includes(img.url)){
       card.querySelector(".favorite-btn").classList.add("active");
     }
   });
 }
-
-/* ===================================
-   DESCARGA FORZADA
-=================================== */
 
 document.addEventListener("click", async function(e){
 
@@ -213,7 +168,7 @@ document.addEventListener("click", async function(e){
 
     const response = await fetch(url);
     const blob = await response.blob();
-    const blobUrl = window.URL.createObjectURL(blob);
+    const blobUrl = URL.createObjectURL(blob);
 
     const link=document.createElement("a");
     link.href=blobUrl;
@@ -223,10 +178,9 @@ document.addEventListener("click", async function(e){
     link.click();
     document.body.removeChild(link);
 
-    window.URL.revokeObjectURL(blobUrl);
+    URL.revokeObjectURL(blobUrl);
   }
 
-  // Favoritos
   const favBtn = e.target.closest(".favorite-btn");
   if(favBtn){
 
@@ -234,7 +188,7 @@ document.addEventListener("click", async function(e){
     let favorites = JSON.parse(localStorage.getItem("favorites")) || [];
 
     if(favorites.includes(url)){
-      favorites = favorites.filter(f=>f!==url);
+      favorites=favorites.filter(f=>f!==url);
       favBtn.classList.remove("active");
     }else{
       favorites.push(url);
@@ -244,45 +198,19 @@ document.addEventListener("click", async function(e){
     localStorage.setItem("favorites", JSON.stringify(favorites));
   }
 
-  // Fullscreen
   const viewBtn = e.target.closest(".view-wallpaper");
   if(viewBtn){
-
-    const modal = document.getElementById("fullscreenModal");
-    const image = document.getElementById("fullscreenImage");
-
-    image.src = viewBtn.dataset.url;
-    modal.style.display="flex";
+    document.getElementById("fullscreenImage").src=viewBtn.dataset.url;
+    document.getElementById("fullscreenModal").style.display="flex";
   }
 });
 
-/* ===================================
-   CERRAR FULLSCREEN
-=================================== */
-
-document.getElementById("closeFullscreen").onclick = function(){
+document.getElementById("closeFullscreen").onclick=function(){
   document.getElementById("fullscreenModal").style.display="none";
 };
 
-document.getElementById("fullscreenModal").onclick = function(e){
-  if(e.target === this){
+document.getElementById("fullscreenModal").onclick=function(e){
+  if(e.target===this){
     this.style.display="none";
   }
 };
-
-/* ===================================
-   BUSCADOR
-=================================== */
-
-if(searchInput){
-  searchInput.addEventListener("input",function(){
-
-    const value=this.value.toLowerCase();
-
-    const filtered=allImages.filter(img=>
-      img.name.toLowerCase().includes(value)
-    );
-
-    renderGallery(filtered);
-  });
-}

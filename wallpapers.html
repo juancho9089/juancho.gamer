@@ -7,6 +7,7 @@
 <link rel="stylesheet" href="css/style.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
+
 <body>
 
 <nav>
@@ -29,21 +30,21 @@
   <h1>Wallpapers</h1>
 
   <!-- BUSCADOR -->
-<div style="margin-bottom:30px;">
-  <input type="text"
-         id="searchInput"
-         placeholder="🔎 Buscar wallpaper..."
-         style="
-           padding:12px 20px;
-           border-radius:10px;
-           border:1px solid #00ffcc;
-           background:#111;
-           color:#00ffcc;
-           width:300px;
-           outline:none;
-           font-weight:bold;
-         ">
-</div>
+  <div style="margin-bottom:30px;">
+    <input type="text"
+           id="searchInput"
+           placeholder="🔎 Buscar wallpaper..."
+           style="
+             padding:12px 20px;
+             border-radius:10px;
+             border:1px solid #00ffcc;
+             background:#111;
+             color:#00ffcc;
+             width:300px;
+             outline:none;
+             font-weight:bold;
+           ">
+  </div>
 
   <!-- CATEGORÍAS -->
   <div id="categoryBar" class="category-bar"></div>
@@ -52,13 +53,14 @@
   <div id="gallery" class="gallery"></div>
 </section>
 
-<script src="js/main.js"></script>
-<script src="js/wallpapers.js"></script>
-
+<!-- FULLSCREEN (debe ir antes de cerrar body) -->
 <div class="fullscreen-modal" id="fullscreenModal">
   <span id="closeFullscreen">&times;</span>
   <img id="fullscreenImage">
 </div>
+
+<script src="js/main.js"></script>
+<script src="js/wallpapers.js"></script>
 
 </body>
 </html>

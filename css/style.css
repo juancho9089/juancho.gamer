@@ -476,19 +476,27 @@ canvas{
   box-shadow:0 0 15px #00ffcc;
 }
 
-/* ===== RESOLUCIÓN ===== */
+/* ===== RESOLUTION BADGE ===== */
 .resolution{
   position:absolute;
   bottom:15px;
-  left:15px;
-  background:rgba(0,0,0,0.7);
-  color:#00ffcc;
-  padding:4px 8px;
+  left:50%;
+  transform:translateX(-50%);
+  padding:6px 14px;
   font-size:12px;
-  border-radius:6px;
+  font-weight:bold;
+  border-radius:20px;
+  letter-spacing:1px;
+  box-shadow:0 0 15px rgba(0,255,204,0.6);
 }
 
-/* ===== FAVORITO ===== */
+/* Colores dinámicos */
+.res-4k{ background:gold; color:#000; }
+.res-2k{ background:#00ffcc; color:#000; }
+.res-1080{ background:#00ff88; color:#000; }
+.res-hd{ background:#888; color:#000; }
+
+/* FAVORITOS */
 .favorite-btn{
   position:absolute;
   top:10px;
@@ -499,7 +507,6 @@ canvas{
   padding:6px 8px;
   border-radius:50%;
   cursor:pointer;
-  transition:0.3s;
 }
 
 .favorite-btn.active{
@@ -507,7 +514,7 @@ canvas{
   text-shadow:0 0 10px #ff0055;
 }
 
-/* ===== FULLSCREEN ===== */
+/* FULLSCREEN */
 .fullscreen-modal{
   display:none;
   position:fixed;
@@ -533,3 +540,4 @@ canvas{
   color:#00ffcc;
   cursor:pointer;
 }
+
