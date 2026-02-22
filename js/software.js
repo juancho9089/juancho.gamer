@@ -9,6 +9,14 @@ async function init(){
 
   gallery.innerHTML = "Cargando software...";
 
+  const cached = localStorage.getItem("softwareCache");
+
+  if(cached){
+    const parsed = JSON.parse(cached);
+    renderSoftware(parsed);
+    return;
+  }
+
   try{
 
     const res = await fetch(
@@ -21,6 +29,8 @@ async function init(){
       gallery.innerHTML = "No hay releases disponibles.";
       return;
     }
+
+    localStorage.setItem("softwareCache", JSON.stringify(releases));
 
     renderSoftware(releases);
 
@@ -38,7 +48,6 @@ function renderSoftware(releases){
 
     const isNew = index === 0;
 
-    // 🔥 FILTRAMOS SOLO ARCHIVOS REALES
     const realAssets = release.assets.filter(asset =>
       !asset.name.toLowerCase().includes("source code")
     );
