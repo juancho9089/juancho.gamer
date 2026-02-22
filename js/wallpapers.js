@@ -17,7 +17,7 @@ async function fetchCategories() {
 
   categories = data.filter(item => item.type === "dir");
   createCategoryButtons();
-  loadAllImages();
+  await loadAllImages();
 }
 
 async function loadAllImages() {
@@ -29,14 +29,19 @@ async function loadAllImages() {
     const files = await res.json();
 
     const images = files.filter(f => f.type === "file");
+
     images.forEach(img => {
       allImages.push({
         name: img.name,
         category: category.name,
-        url: `https://raw.githubusercontent.com/${USER}/${REPO}/${BRANCH}/${BASE_PATH}/${category.name}/${img.name}`
+        url: `https://raw.githubusercontent.com/${USER}/${REPO}/${BRANCH}/${BASE_PATH}/${category.name}/${img.name}`,
+        date: img.sha // usamos sha como pseudo orden de actualización
       });
     });
   }
+
+  // Ordenar por más reciente primero
+  allImages.sort((a, b) => b.date.localeCompare(a.date));
 
   renderGallery(allImages);
 }
@@ -44,7 +49,7 @@ async function loadAllImages() {
 function createCategoryButtons() {
   categoryBar.innerHTML = "";
 
-  const allBtn = createButton("TODOS", () => renderGallery(allImages));
+  const allBtn = createButton(`TODOS`, () => renderGallery(allImages));
   const randomBtn = createButton("RANDOM", () => {
     const random = allImages[Math.floor(Math.random() * allImages.length)];
     renderGallery([random]);
@@ -54,10 +59,16 @@ function createCategoryButtons() {
   categoryBar.appendChild(randomBtn);
 
   categories.forEach(cat => {
-    const btn = createButton(cat.name.toUpperCase(), () => {
-      const filtered = allImages.filter(img => img.category === cat.name);
-      renderGallery(filtered);
-    });
+    const count = allImages.filter(img => img.category === cat.name).length;
+
+    const btn = createButton(
+      `${cat.name.toUpperCase()} (${count})`,
+      () => {
+        const filtered = allImages.filter(img => img.category === cat.name);
+        renderGallery(filtered);
+      }
+    );
+
     categoryBar.appendChild(btn);
   });
 }
@@ -71,26 +82,37 @@ function createButton(text, onClick) {
 }
 
 function renderGallery(images) {
-  gallery.innerHTML = "";
+  gallery.style.opacity = "0";
 
-  images.forEach(img => {
-    const card = document.createElement("div");
-    card.className = "card";
+  setTimeout(() => {
+    gallery.innerHTML = "";
 
-    card.innerHTML = `
-      <img src="${img.url}">
-      <div class="overlay">
-        <button class="download-wallpaper" data-url="${img.url}" data-name="${img.name}">
-          <i class="fa-solid fa-download"></i> Descargar
-        </button>
-      </div>
-    `;
+    images.forEach((img, index) => {
 
-    gallery.appendChild(card);
-  });
+      const isNew = index < 3; // Las 3 primeras son "NEW"
+
+      const card = document.createElement("div");
+      card.className = "card";
+
+      card.innerHTML = `
+        <img src="${img.url}" loading="lazy">
+        ${isNew ? '<div class="badge">NEW</div>' : ''}
+        <div class="overlay">
+          <button class="download-wallpaper" data-url="${img.url}" data-name="${img.name}">
+            <i class="fa-solid fa-download"></i> Descargar
+          </button>
+        </div>
+      `;
+
+      gallery.appendChild(card);
+    });
+
+    gallery.style.opacity = "1";
+
+  }, 200);
 }
 
-fetchCategories();
+/* ===== DESCARGA CROSS DOMAIN ===== */
 
 document.addEventListener("click", async function(e){
 
@@ -132,3 +154,5 @@ document.addEventListener("click", async function(e){
   }
 
 });
+
+fetchCategories();
