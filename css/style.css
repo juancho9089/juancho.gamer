@@ -24,13 +24,29 @@ nav{
   z-index:1000;
 }
 
-/* LOGO IZQUIERDA */
+/* LOGO */
 .logo{
+  display:flex;
+  align-items:center;
+  gap:10px;
   font-size:20px;
   font-weight:bold;
   color:#00ffcc;
   text-shadow:0 0 10px #00ffcc;
   animation: glow 2.5s ease-in-out infinite alternate;
+}
+
+.logo img{
+  width:55px;
+  height:55px;
+  border-radius:50%;
+  border:2px solid #00ffcc;
+  box-shadow:0 0 20px #00ffcc;
+}
+/* 👇 AQUÍ MISMO debajo */
+.logo img:hover{
+  transform:scale(1.1);
+  box-shadow:0 0 25px #00ffcc;
 }
 
 @keyframes glow{
@@ -44,21 +60,29 @@ nav{
   left:50%;
   transform:translateX(-50%);
   display:flex;
-  gap:40px;
+  gap:25px;
 }
 
 .nav-links a{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  padding:12px 20px;
+  border-radius:10px;
+  background:#111;
   color:#aaa;
   text-decoration:none;
   font-size:14px;
-  font-weight:bold;
+  font-weight:700;       /* 🔥 MÁS NEGRILLA */
+  letter-spacing:1px;    /* 🔥 MÁS ESTILO PRO */
   transition:0.3s;
 }
 
 .nav-links a:hover,
 .nav-links a.active{
-  color:#00ffcc;
-  text-shadow:0 0 10px #00ffcc;
+  background:#00ffcc;
+  color:#000;
+  box-shadow:0 0 15px #00ffcc;
 }
 
 /* ===== SECCIONES ===== */
@@ -68,7 +92,6 @@ section{
   text-align:center;
 }
 
-/* ===== TITULOS ===== */
 h1{
   font-size:48px;
   color:#00ffcc;
@@ -76,49 +99,28 @@ h1{
   margin-bottom:40px;
 }
 
-/* ===== BOTONES GENERALES ===== */
-.btn{
-  display:inline-block;
-  padding:14px 30px;
-  margin:20px;
-  background:#00ffcc;
-  color:#000;
-  text-decoration:none;
-  border-radius:6px;
-  font-weight:bold;
-  transition:0.3s;
-}
-
-.btn:hover{
-  box-shadow:0 0 20px #00ffcc;
-}
-
-/* ===================================================== */
-/* ================= WALLPAPERS ======================== */
-/* ===================================================== */
-
-/* GRID */
+/* ===== GALERIA ===== */
 .gallery{
   display:grid;
   grid-template-columns:repeat(auto-fit, minmax(260px,1fr));
-  gap:25px;
+  gap:30px;
   max-width:1100px;
   margin:auto;
 }
 
-/* CARD */
 .card{
   position:relative;
+  border-radius:18px;
   overflow:hidden;
-  border-radius:15px;
   background:#111;
+  border:2px solid #00ffcc;
+  box-shadow:0 0 15px rgba(0,255,204,0.3);
 }
 
-/* IMAGEN */
+/* IMAGEN SIN DEFORMAR */
 .card img{
   width:100%;
-  height:240px;         /* 👈 TAMAÑO CONTROLADO */
-  object-fit:cover;
+  height:auto;     /* 🔥 ahora no se alarga */
   display:block;
   transition:0.3s;
 }
@@ -127,7 +129,7 @@ h1{
   transform:scale(1.05);
 }
 
-/* OVERLAY BOTONES */
+/* BOTONES */
 .overlay{
   position:absolute;
   bottom:15px;
@@ -143,40 +145,26 @@ h1{
   opacity:1;
 }
 
-/* BOTON VER */
-.view{
-  background:#1c1c1c;
-  border:none;
+.overlay button,
+.overlay a{
+  background:rgba(30,30,30,0.9);
   color:#ccc;
-  padding:12px;
-  border-radius:12px;
-  cursor:pointer;
-  transition:0.3s;
-  font-size:16px;
-}
-
-.view:hover{
-  background:#00ffcc;
-  color:#000;
-  box-shadow:0 0 15px #00ffcc;
-}
-
-/* BOTON DOWNLOAD */
-.download{
-  background:#1c1c1c;
-  color:#00ffcc;
-  padding:12px 20px;
+  border:1px solid #333;
+  padding:10px 16px;
   border-radius:12px;
   text-decoration:none;
-  font-weight:bold;
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  gap:6px;
   transition:0.3s;
-  font-size:14px;
 }
 
-.download:hover{
+.overlay button:hover,
+.overlay a:hover{
   background:#00ffcc;
   color:#000;
-  box-shadow:0 0 15px #00ffcc;
+  box-shadow:0 0 20px #00ffcc;
 }
 
 /* ===== CANVAS PARTICULAS ===== */
@@ -187,4 +175,186 @@ canvas{
   width:100%;
   height:100%;
   z-index:-1;
+}
+
+/* ===== SOFTWARE CARDS ===== */
+
+.software-card{
+  background:#111;
+  border-radius:18px;
+  overflow:hidden;
+  border:2px solid #00ffcc;
+  box-shadow:0 0 15px rgba(0,255,204,0.3);
+  max-width:350px;
+  margin:auto;
+  transition:0.3s;
+}
+
+.software-card:hover{
+  transform:translateY(-5px);
+  box-shadow:0 0 25px #00ffcc;
+}
+
+.software-card img{
+  width:100%;
+  height:220px;
+  object-fit:cover;
+  border-bottom:1px solid #00ffcc;
+  background:linear-gradient(135deg,#111,#1a1a1a);
+}
+
+.software-info{
+  padding:20px;
+  text-align:center;
+}
+
+.software-info h3{
+  color:#00ffcc;
+  margin-bottom:5px;
+}
+
+.software-info p{
+  font-size:14px;
+  color:#ccc;
+}
+
+.desc{
+  margin:10px 0;
+  font-size:13px;
+  color:#888;
+}
+
+.software-buttons{
+  display:flex;
+  justify-content:center;
+  gap:10px;
+  margin-top:15px;
+}
+
+.software-buttons button,
+.software-buttons a{
+  background:#1c1c1c;
+  border:none;
+  color:#00ffcc;
+  padding:10px 15px;
+  border-radius:10px;
+  text-decoration:none;
+  font-size:13px;
+  display:flex;
+  align-items:center;
+  gap:6px;
+  transition:0.3s;
+  cursor:pointer;
+}
+
+.software-buttons button:hover,
+.software-buttons a:hover{
+  background:#00ffcc;
+  color:#000;
+  box-shadow:0 0 15px #00ffcc;
+}
+
+/* ===== MODAL ===== */
+
+.modal{
+  display:none;
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,0.85);
+  backdrop-filter:blur(5px);
+  justify-content:center;
+  align-items:center;
+  z-index:2000;
+}
+
+.modal-content{
+  background:#111;
+  padding:30px;
+  border-radius:20px;
+  border:2px solid #00ffcc;
+  box-shadow:0 0 30px #00ffcc;
+  max-width:500px;
+  text-align:center;
+  animation: pop 0.3s ease;
+}
+
+@keyframes pop{
+  from{ transform:scale(0.8); opacity:0; }
+  to{ transform:scale(1); opacity:1; }
+}
+
+.modal-content img{
+  width:100%;
+  border-radius:15px;
+  margin-bottom:15px;
+}
+
+.close{
+  position:absolute;
+  right:30px;
+  top:20px;
+  font-size:28px;
+  cursor:pointer;
+  color:#00ffcc;
+}
+
+.modal-btn{
+  display:inline-block;
+  margin-top:15px;
+  padding:10px 20px;
+  background:#00ffcc;
+  color:#000;
+  border-radius:10px;
+  text-decoration:none;
+  font-weight:bold;
+}
+
+.software-banner{
+  height:220px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:linear-gradient(135deg,#0f0f0f,#1c1c1c);
+  border-bottom:1px solid #00ffcc;
+}
+
+.software-banner i{
+  font-size:60px;
+  color:#00ffcc;
+  opacity:0.8;
+}
+
+/* ===== EFECTO DESCARGA PREMIUM ===== */
+
+.download-btn{
+  background:#1c1c1c;
+  border:none;
+  color:#00ffcc;
+  padding:10px 15px;
+  border-radius:10px;
+  text-decoration:none;
+  font-size:13px;
+  display:flex;
+  align-items:center;
+  gap:6px;
+  transition:0.3s;
+  cursor:pointer;
+}
+
+.download-btn:hover{
+  background:#00ffcc;
+  color:#000;
+  box-shadow:0 0 15px #00ffcc;
+}
+
+.download-btn.downloading{
+  background:#00ffcc;
+  color:#000;
+  box-shadow:0 0 25px #00ffcc;
+}
+
+.download-btn.downloaded{
+  background:#00ff88;
+  color:#000;
+  box-shadow:0 0 25px #00ff88;
 }
