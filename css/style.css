@@ -475,3 +475,61 @@ canvas{
 #searchInput:focus{
   box-shadow:0 0 15px #00ffcc;
 }
+
+/* ===== RESOLUCIÓN ===== */
+.resolution{
+  position:absolute;
+  bottom:15px;
+  left:15px;
+  background:rgba(0,0,0,0.7);
+  color:#00ffcc;
+  padding:4px 8px;
+  font-size:12px;
+  border-radius:6px;
+}
+
+/* ===== FAVORITO ===== */
+.favorite-btn{
+  position:absolute;
+  top:10px;
+  right:10px;
+  background:rgba(0,0,0,0.7);
+  border:none;
+  color:#fff;
+  padding:6px 8px;
+  border-radius:50%;
+  cursor:pointer;
+  transition:0.3s;
+}
+
+.favorite-btn.active{
+  color:#ff0055;
+  text-shadow:0 0 10px #ff0055;
+}
+
+/* ===== FULLSCREEN ===== */
+.fullscreen-modal{
+  display:none;
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,0.95);
+  justify-content:center;
+  align-items:center;
+  z-index:5000;
+}
+
+.fullscreen-modal img{
+  max-width:90%;
+  max-height:90%;
+  border-radius:12px;
+  box-shadow:0 0 30px #00ffcc;
+}
+
+.fullscreen-modal span{
+  position:absolute;
+  top:30px;
+  right:40px;
+  font-size:30px;
+  color:#00ffcc;
+  cursor:pointer;
+}
