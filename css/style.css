@@ -1,15 +1,17 @@
-html{
-  scroll-behavior: smooth;
+/* ===== RESET ===== */
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
 }
 
 body{
-  margin:0;
   background:#000;
-  color:white;
-  font-family: Arial, sans-serif;
+  color:#fff;
+  font-family:Arial, sans-serif;
 }
 
-/* NAVBAR */
+/* ===== NAVBAR ===== */
 nav{
   position:fixed;
   top:0;
@@ -17,49 +19,71 @@ nav{
   display:flex;
   justify-content:space-between;
   align-items:center;
-  padding:20px 50px;
-  background:rgba(0,0,0,0.9);
+  padding:20px 60px;
+  background:rgba(0,0,0,0.85);
   border-bottom:1px solid #00ffcc;
-  z-index:100;
+  z-index:1000;
 }
 
 .logo{
-  color:#00ffcc;
-  font-weight:bold;
   font-size:20px;
-  text-shadow:0 0 10px #00ffcc;
+  font-weight:bold;
+  color:#00ffcc;
+  animation: glow 2.5s ease-in-out infinite alternate;
+}
+
+@keyframes glow{
+  from{
+    text-shadow:0 0 5px #00ffcc;
+  }
+  to{
+    text-shadow:0 0 20px #00ffcc, 0 0 30px #00ffcc;
+  }
 }
 
 .nav-links a{
-  color:white;
   text-decoration:none;
-  margin-left:25px;
+  color:#aaa;
+  margin-left:30px;
   transition:0.3s;
+  font-size:14px;
+  letter-spacing:1px;
 }
 
-.nav-links a:hover,
+.nav-links a:hover{
+  color:#00ffcc;
+}
+
 .nav-links a.active{
   color:#00ffcc;
   text-shadow:0 0 10px #00ffcc;
 }
 
-/* CONTENIDO */
+/* ===== SECCIONES ===== */
 section{
-  margin-top:140px;
+  margin-top:150px;
   padding:40px;
   text-align:center;
 }
 
-/* BOTONES */
+/* ===== TITULOS ===== */
+h1{
+  font-size:48px;
+  color:#00ffcc;
+  text-shadow:0 0 20px #00ffcc;
+  margin-bottom:20px;
+}
+
+/* ===== BOTONES ===== */
 .btn{
   display:inline-block;
-  padding:15px 30px;
+  padding:14px 30px;
   margin:20px;
   background:#00ffcc;
   color:#000;
   text-decoration:none;
+  border-radius:6px;
   font-weight:bold;
-  border-radius:8px;
   transition:0.3s;
 }
 
@@ -67,20 +91,21 @@ section{
   box-shadow:0 0 20px #00ffcc;
 }
 
-/* GALERÍA */
+/* ===== WALLPAPERS ===== */
 .wallpapers img{
-  width:250px;
+  width:280px;
+  max-width:90%;
   margin:20px;
-  border-radius:10px;
+  border-radius:12px;
   transition:0.3s;
 }
 
 .wallpapers img:hover{
-  transform:scale(1.1);
-  box-shadow:0 0 20px #00ffcc;
+  transform:scale(1.05);
+  box-shadow:0 0 25px #00ffcc;
 }
 
-/* CANVAS */
+/* ===== CANVAS PARTICULAS ===== */
 canvas{
   position:fixed;
   top:0;
