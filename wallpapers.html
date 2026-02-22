@@ -2,17 +2,10 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Wallpapers - Juancho Gamer</title>
-
+<title>Wallpapers - @JUANCHO.GAMER</title>
 <link rel="stylesheet" href="css/style.css">
-
-<!-- ICONOS -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-
 </head>
 <body>
-
-<canvas id="particles"></canvas>
 
 <!-- NAVBAR -->
 <nav>
@@ -21,56 +14,60 @@
   <div class="nav-links">
     <a href="index.html">INICIO</a>
     <a href="software.html">SOFTWARE</a>
-    <a class="active" href="wallpapers.html">WALLPAPERS</a>
+    <a href="wallpapers.html" class="active">WALLPAPERS</a>
     <a href="proyectos.html">PROYECTOS</a>
     <a href="videos.html">VIDEOS</a>
     <a href="sobre.html">SOBRE</a>
   </div>
 </nav>
 
-<section class="page-section">
-  <h1 class="page-title">Wallpapers</h1>
+<!-- CONTENIDO -->
+<section>
+  <h1>Wallpapers</h1>
 
   <div class="gallery">
 
     <!-- CARD 1 -->
     <div class="card">
       <img src="images/wallpaper1.jpg">
-      <div class="overlay">
-        <button class="icon-btn" onclick="openModal('images/wallpaper1.jpg')">
-          <i class="fa-solid fa-eye"></i>
-        </button>
 
-        <a href="images/wallpaper1.jpg" download class="download-btn">
-          <i class="fa-solid fa-download"></i> Download
-        </a>
+      <div class="overlay">
+        <button class="view" onclick="openModal('images/wallpaper1.jpg')">👁</button>
+        <a href="images/wallpaper1.jpg" download class="download">⬇ Download</a>
       </div>
     </div>
 
     <!-- CARD 2 -->
     <div class="card">
       <img src="images/wallpaper2.jpg">
-      <div class="overlay">
-        <button class="icon-btn" onclick="openModal('images/wallpaper2.jpg')">
-          <i class="fa-solid fa-eye"></i>
-        </button>
 
-        <a href="images/wallpaper2.jpg" download class="download-btn">
-          <i class="fa-solid fa-download"></i> Download
-        </a>
+      <div class="overlay">
+        <button class="view" onclick="openModal('images/wallpaper2.jpg')">👁</button>
+        <a href="images/wallpaper2.jpg" download class="download">⬇ Download</a>
       </div>
     </div>
 
   </div>
 </section>
 
-<!-- MODAL -->
-<div id="modal" class="modal">
-  <span class="close" onclick="closeModal()">&times;</span>
-  <img class="modal-content" id="modal-img">
+<!-- MODAL PARA VER GRANDE -->
+<div id="modal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.9); z-index:2000; text-align:center;">
+  <span onclick="closeModal()" style="position:absolute; top:20px; right:40px; font-size:40px; color:#00ffcc; cursor:pointer;">&times;</span>
+  <img id="modal-img" style="max-width:80%; margin-top:80px; border-radius:15px;">
 </div>
 
 <script src="js/main.js"></script>
+
+<script>
+function openModal(src){
+  document.getElementById("modal").style.display="block";
+  document.getElementById("modal-img").src=src;
+}
+
+function closeModal(){
+  document.getElementById("modal").style.display="none";
+}
+</script>
 
 </body>
 </html>

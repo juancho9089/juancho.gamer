@@ -1,4 +1,17 @@
-/* NAVBAR */
+/* ===== RESET ===== */
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+}
+
+body{
+  background:#000;
+  color:#fff;
+  font-family:Arial, sans-serif;
+}
+
+/* ===== NAVBAR ===== */
 nav{
   position:fixed;
   top:0;
@@ -11,6 +24,7 @@ nav{
   z-index:1000;
 }
 
+/* LOGO IZQUIERDA */
 .logo{
   font-size:20px;
   font-weight:bold;
@@ -19,6 +33,12 @@ nav{
   animation: glow 2.5s ease-in-out infinite alternate;
 }
 
+@keyframes glow{
+  from{ text-shadow:0 0 5px #00ffcc; }
+  to{ text-shadow:0 0 20px #00ffcc, 0 0 30px #00ffcc; }
+}
+
+/* PESTAÑAS CENTRADAS */
 .nav-links{
   position:absolute;
   left:50%;
@@ -30,53 +50,74 @@ nav{
 .nav-links a{
   color:#aaa;
   text-decoration:none;
+  font-size:14px;
   font-weight:bold;
   transition:0.3s;
 }
 
 .nav-links a:hover,
-.nav-links .active{
+.nav-links a.active{
   color:#00ffcc;
   text-shadow:0 0 10px #00ffcc;
 }
 
-@keyframes glow{
-  from{ text-shadow:0 0 10px #00ffcc; }
-  to{ text-shadow:0 0 20px #00ffcc; }
-}
-
-/* SECCIÓN */
-.page-section{
-  padding-top:150px;
+/* ===== SECCIONES ===== */
+section{
+  margin-top:150px;
+  padding:40px;
   text-align:center;
 }
 
-.page-title{
+/* ===== TITULOS ===== */
+h1{
   font-size:48px;
   color:#00ffcc;
   text-shadow:0 0 20px #00ffcc;
-  margin-bottom:60px;
+  margin-bottom:40px;
 }
 
-/* GALERÍA */
+/* ===== BOTONES GENERALES ===== */
+.btn{
+  display:inline-block;
+  padding:14px 30px;
+  margin:20px;
+  background:#00ffcc;
+  color:#000;
+  text-decoration:none;
+  border-radius:6px;
+  font-weight:bold;
+  transition:0.3s;
+}
+
+.btn:hover{
+  box-shadow:0 0 20px #00ffcc;
+}
+
+/* ===================================================== */
+/* ================= WALLPAPERS ======================== */
+/* ===================================================== */
+
+/* GRID */
 .gallery{
   display:grid;
   grid-template-columns:repeat(auto-fit, minmax(260px,1fr));
   gap:25px;
-  max-width:1200px;
+  max-width:1100px;
   margin:auto;
 }
 
+/* CARD */
 .card{
   position:relative;
-  border-radius:15px;
   overflow:hidden;
+  border-radius:15px;
   background:#111;
 }
 
+/* IMAGEN */
 .card img{
   width:100%;
-  height:300px;
+  height:240px;         /* 👈 TAMAÑO CONTROLADO */
   object-fit:cover;
   display:block;
   transition:0.3s;
@@ -86,7 +127,7 @@ nav{
   transform:scale(1.05);
 }
 
-/* BOTONES */
+/* OVERLAY BOTONES */
 .overlay{
   position:absolute;
   bottom:15px;
@@ -102,59 +143,48 @@ nav{
   opacity:1;
 }
 
-.icon-btn{
+/* BOTON VER */
+.view{
   background:#1c1c1c;
   border:none;
   color:#ccc;
   padding:12px;
-  border-radius:10px;
+  border-radius:12px;
   cursor:pointer;
   transition:0.3s;
+  font-size:16px;
 }
 
-.icon-btn:hover{
+.view:hover{
   background:#00ffcc;
   color:#000;
+  box-shadow:0 0 15px #00ffcc;
 }
 
-.download-btn{
+/* BOTON DOWNLOAD */
+.download{
   background:#1c1c1c;
   color:#00ffcc;
-  padding:12px 18px;
-  border-radius:10px;
+  padding:12px 20px;
+  border-radius:12px;
   text-decoration:none;
+  font-weight:bold;
   transition:0.3s;
+  font-size:14px;
 }
 
-.download-btn:hover{
+.download:hover{
   background:#00ffcc;
   color:#000;
+  box-shadow:0 0 15px #00ffcc;
 }
 
-/* MODAL */
-.modal{
-  display:none;
+/* ===== CANVAS PARTICULAS ===== */
+canvas{
   position:fixed;
-  z-index:2000;
-  left:0;
   top:0;
+  left:0;
   width:100%;
   height:100%;
-  background:rgba(0,0,0,0.9);
-}
-
-.modal-content{
-  display:block;
-  margin:5% auto;
-  max-width:80%;
-  border-radius:15px;
-}
-
-.close{
-  position:absolute;
-  top:20px;
-  right:40px;
-  color:#00ffcc;
-  font-size:40px;
-  cursor:pointer;
+  z-index:-1;
 }
