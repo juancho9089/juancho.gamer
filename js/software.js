@@ -14,57 +14,48 @@ async function init(){
 
   gallery.innerHTML = "Cargando software...";
 
-  const res = await fetch(`https://api.github.com/repos/${USER}/${REPO}/releases`);
-  const releases = await res.json();
+  try{
+    const res = await fetch(`https://api.github.com/repos/${USER}/${REPO}/releases`);
 
-  if(!releases.length){
-    gallery.innerHTML = "No hay releases disponibles.";
-    return;
-  }
-
-  /* 🔥 ORDENAR POR VERSIÓN REAL */
-  releases.sort((a,b)=>{
-    const getVersion = name => {
-      const match = name.match(/v?(\d+(\.\d+)?)/i);
-      return match ? parseFloat(match[1]) : 0;
-    };
-    return getVersion(b.name) - getVersion(a.name);
-  });
-
-  allSoftware = releases.map((r,index)=>{
-
-    const categoryMatch = r.name.match(/\[(.*?)\]/);
-    const category = categoryMatch ? categoryMatch[1].toLowerCase() : "general";
-
-    const asset = r.assets[0];
-
-    /* 🔥 DETECTAR TIPO ARCHIVO */
-    let fileType = "";
-    if(asset){
-      if(asset.name.endsWith(".zip")) fileType = "ZIP";
-      else if(asset.name.endsWith(".exe")) fileType = "EXE";
-      else fileType = asset.name.split(".").pop().toUpperCase();
+    if(!res.ok){
+      gallery.innerHTML = "⚠ GitHub rate limit alcanzado. Espera unos minutos.";
+      return;
     }
 
-    return {
-      name: r.name.replace(/\[.*?\]/,"").trim(),
-      category: category,
-      description: r.body || "Sin descripción",
-      download: asset?.browser_download_url || "#",
-      size: asset ? (asset.size / (1024*1024)).toFixed(1) + " MB" : "",
-      date: new Date(r.published_at).toLocaleDateString(),
-      fileType: fileType,
-      isNew: index === 0
-    };
-  });
+    const releases = await res.json();
 
-  createCategories();
-  renderGallery(allSoftware);
+    if(!releases.length){
+      gallery.innerHTML = "No hay releases disponibles.";
+      return;
+    }
+
+    allSoftware = releases.map((r,index)=>{
+
+      const categoryMatch = r.name.match(/\[(.*?)\]/);
+      const category = categoryMatch ? categoryMatch[1].toLowerCase() : "general";
+
+      const asset = r.assets[0];
+
+      return {
+        name: r.name.replace(/\[.*?\]/,"").trim(),
+        category: category,
+        description: r.body || "Sin descripción",
+        download: asset?.browser_download_url || "#",
+        size: asset ? (asset.size / (1024*1024)).toFixed(1) + " MB" : "",
+        date: new Date(r.published_at).toLocaleDateString(),
+        isNew: index === 0
+      };
+    });
+
+    createCategories();
+    renderGallery(allSoftware);
+
+  }catch(error){
+    gallery.innerHTML = "Error cargando releases.";
+  }
 }
 
-/* ========================= */
 /* ICONOS AUTOMÁTICOS */
-/* ========================= */
 
 function getCategoryIcon(name){
 
@@ -73,17 +64,13 @@ function getCategoryIcon(name){
     utilidad: "🛠",
     herramienta: "🧰",
     juego: "🎮",
-    game: "🎮",
-    autos: "🚗",
-    editor: "✏"
+    autos: "🚗"
   };
 
   return icons[name] || "💾";
 }
 
-/* ========================= */
 /* CATEGORÍAS */
-/* ========================= */
 
 function createCategories(){
 
@@ -116,6 +103,7 @@ function createButton(text, category){
 }
 
 function updateActive(){
+
   document.querySelectorAll(".category-btn").forEach(btn=>{
     btn.classList.remove("active-category");
 
@@ -130,6 +118,7 @@ function updateActive(){
 }
 
 function filterSoftware(){
+
   if(currentCategory==="all"){
     renderGallery(allSoftware);
   }else{
@@ -138,9 +127,7 @@ function filterSoftware(){
   }
 }
 
-/* ========================= */
 /* RENDER */
-/* ========================= */
 
 function renderGallery(data){
 
@@ -163,9 +150,7 @@ function renderGallery(data){
         <h3>${software.name}</h3>
         <p>Versión • ${software.date}</p>
         <p class="desc">${software.description}</p>
-        <p style="font-size:12px;color:#888;">
-          📦 ${software.size} • ${software.fileType}
-        </p>
+        <p style="font-size:12px;color:#888;">📦 ${software.size}</p>
 
         <div class="software-buttons">
           <button class="view-btn"
@@ -187,9 +172,7 @@ function renderGallery(data){
   });
 }
 
-/* ========================= */
 /* BUSCADOR */
-/* ========================= */
 
 searchInput.addEventListener("input", function(){
 
@@ -202,9 +185,7 @@ searchInput.addEventListener("input", function(){
   renderGallery(filtered);
 });
 
-/* ========================= */
-/* MODAL CON X LIMPIA */
-/* ========================= */
+/* MODAL */
 
 document.addEventListener("click", function(e){
 
