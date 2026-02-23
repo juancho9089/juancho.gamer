@@ -14,20 +14,6 @@ async function init(){
 
   gallery.innerHTML = "Cargando software...";
 
-  const cached = localStorage.getItem("softwareCache");
-
-  if(cached){
-    allSoftware = JSON.parse(cached);
-    createCategories();
-    renderGallery(allSoftware);
-    return;
-  }
-
-  await fetchReleases();
-}
-
-async function fetchReleases(){
-
   const res = await fetch(`https://api.github.com/repos/${USER}/${REPO}/releases`);
   const releases = await res.json();
 
@@ -36,12 +22,29 @@ async function fetchReleases(){
     return;
   }
 
+  /* 🔥 ORDENAR POR VERSIÓN REAL */
+  releases.sort((a,b)=>{
+    const getVersion = name => {
+      const match = name.match(/v?(\d+(\.\d+)?)/i);
+      return match ? parseFloat(match[1]) : 0;
+    };
+    return getVersion(b.name) - getVersion(a.name);
+  });
+
   allSoftware = releases.map((r,index)=>{
 
     const categoryMatch = r.name.match(/\[(.*?)\]/);
     const category = categoryMatch ? categoryMatch[1].toLowerCase() : "general";
 
     const asset = r.assets[0];
+
+    /* 🔥 DETECTAR TIPO ARCHIVO */
+    let fileType = "";
+    if(asset){
+      if(asset.name.endsWith(".zip")) fileType = "ZIP";
+      else if(asset.name.endsWith(".exe")) fileType = "EXE";
+      else fileType = asset.name.split(".").pop().toUpperCase();
+    }
 
     return {
       name: r.name.replace(/\[.*?\]/,"").trim(),
@@ -50,11 +53,10 @@ async function fetchReleases(){
       download: asset?.browser_download_url || "#",
       size: asset ? (asset.size / (1024*1024)).toFixed(1) + " MB" : "",
       date: new Date(r.published_at).toLocaleDateString(),
+      fileType: fileType,
       isNew: index === 0
     };
   });
-
-  localStorage.setItem("softwareCache", JSON.stringify(allSoftware));
 
   createCategories();
   renderGallery(allSoftware);
@@ -67,13 +69,13 @@ async function fetchReleases(){
 function getCategoryIcon(name){
 
   const icons = {
+    general: "📦",
     utilidad: "🛠",
     herramienta: "🧰",
     juego: "🎮",
     game: "🎮",
     autos: "🚗",
-    editor: "✏",
-    general: "📦"
+    editor: "✏"
   };
 
   return icons[name] || "💾";
@@ -89,21 +91,20 @@ function createCategories(){
 
   const categories = [...new Set(allSoftware.map(s=>s.category))];
 
-  createButton("🌍 TODOS", "all", allSoftware.length);
+  createButton("🌍 TODOS", "all");
 
   categories.forEach(cat=>{
-    const count = allSoftware.filter(s=>s.category===cat).length;
-    createButton(`${getCategoryIcon(cat)} ${cat.toUpperCase()}`, cat, count);
+    createButton(`${getCategoryIcon(cat)} ${cat.toUpperCase()}`, cat);
   });
 
   updateActive();
 }
 
-function createButton(text, category, count){
+function createButton(text, category){
 
   const btn = document.createElement("button");
   btn.className="category-btn";
-  btn.innerText=`${text} (${count})`;
+  btn.innerText=text;
 
   btn.onclick=()=>{
     currentCategory=category;
@@ -115,7 +116,6 @@ function createButton(text, category, count){
 }
 
 function updateActive(){
-
   document.querySelectorAll(".category-btn").forEach(btn=>{
     btn.classList.remove("active-category");
 
@@ -130,14 +130,12 @@ function updateActive(){
 }
 
 function filterSoftware(){
-
-  let filtered = allSoftware;
-
-  if(currentCategory!=="all"){
-    filtered = allSoftware.filter(s=>s.category===currentCategory);
+  if(currentCategory==="all"){
+    renderGallery(allSoftware);
+  }else{
+    const filtered=allSoftware.filter(s=>s.category===currentCategory);
+    renderGallery(filtered);
   }
-
-  renderGallery(filtered);
 }
 
 /* ========================= */
@@ -151,7 +149,7 @@ function renderGallery(data){
   data.forEach(software=>{
 
     const card=document.createElement("div");
-    card.className="software-card reveal";
+    card.className="software-card";
 
     card.innerHTML=`
 
@@ -165,7 +163,9 @@ function renderGallery(data){
         <h3>${software.name}</h3>
         <p>Versión • ${software.date}</p>
         <p class="desc">${software.description}</p>
-        <p style="font-size:12px;color:#888;">📦 ${software.size}</p>
+        <p style="font-size:12px;color:#888;">
+          📦 ${software.size} • ${software.fileType}
+        </p>
 
         <div class="software-buttons">
           <button class="view-btn"
@@ -188,27 +188,22 @@ function renderGallery(data){
 }
 
 /* ========================= */
-/* BUSCADOR INTELIGENTE */
+/* BUSCADOR */
 /* ========================= */
 
 searchInput.addEventListener("input", function(){
 
   const value=this.value.toLowerCase();
 
-  let filtered=allSoftware.filter(s=>
-    s.name.toLowerCase().includes(value) ||
-    s.description.toLowerCase().includes(value)
+  const filtered=allSoftware.filter(s=>
+    s.name.toLowerCase().includes(value)
   );
-
-  if(currentCategory!=="all"){
-    filtered=filtered.filter(s=>s.category===currentCategory);
-  }
 
   renderGallery(filtered);
 });
 
 /* ========================= */
-/* MODAL ESTABLE */
+/* MODAL CON X LIMPIA */
 /* ========================= */
 
 document.addEventListener("click", function(e){
