@@ -22,6 +22,15 @@ async function init(){
     return;
   }
 
+  /* 🔥 ORDEN REAL POR VERSION */
+  releases.sort((a,b)=>{
+    const getV = name=>{
+      const m = name.match(/v?(\d+(\.\d+)?)/i);
+      return m ? parseFloat(m[1]) : 0;
+    };
+    return getV(b.name) - getV(a.name);
+  });
+
   allSoftware = releases.map((r,index)=>{
 
     const categoryMatch = r.name.match(/\[(.*?)\]/);
@@ -29,15 +38,31 @@ async function init(){
 
     const asset = r.assets[0];
 
+    let fileType="other";
+    let typeLabel="FILE";
+
+    if(asset){
+      if(asset.name.endsWith(".zip")){
+        fileType="zip";
+        typeLabel="ZIP";
+      }
+      else if(asset.name.endsWith(".exe")){
+        fileType="exe";
+        typeLabel="EXE";
+      }
+    }
+
     return {
-      name: r.name.replace(/\[.*?\]/,"").trim(),
-      category: category,
-      description: r.body || "Sin descripción",
-      download: asset?.browser_download_url || "#",
-      size: asset ? (asset.size / (1024*1024)).toFixed(1) + " MB" : "",
-      date: new Date(r.published_at).toLocaleDateString(),
-      image: "images/logo.png",
-      isNew: index === 0
+      id:r.id,
+      name:r.name.replace(/\[.*?\]/,"").trim(),
+      category:category,
+      description:r.body || "Sin descripción",
+      download:asset?.browser_download_url || "#",
+      size:asset ? (asset.size/(1024*1024)).toFixed(1)+" MB" : "",
+      date:new Date(r.published_at).toLocaleDateString(),
+      fileType:fileType,
+      typeLabel:typeLabel,
+      isNew:index===0
     };
   });
 
@@ -45,48 +70,39 @@ async function init(){
   renderGallery(allSoftware);
 }
 
-/* ========================= */
-/* ICONOS AUTOMÁTICOS */
-/* ========================= */
-
+/* ICONOS CATEGORIA */
 function getCategoryIcon(name){
-
-  const icons = {
-    general: "📦",
-    utilidad: "🛠",
-    herramienta: "🧰",
-    juego: "🎮",
-    autos: "🚗",
-    editor: "✏",
-    seguridad: "🔐",
-    sistema: "💻"
+  const icons={
+    general:"📦",
+    utilidad:"🛠",
+    juego:"🎮",
+    autos:"🚗",
+    editor:"✏",
+    sistema:"💻"
   };
-
   return icons[name] || "💾";
 }
 
-/* ========================= */
-/* CATEGORÍAS */
-/* ========================= */
-
+/* CATEGORIAS */
 function createCategories(){
 
-  categoryBar.innerHTML = "";
+  categoryBar.innerHTML="";
 
-  const categories = [...new Set(allSoftware.map(s=>s.category))];
+  const categories=[...new Set(allSoftware.map(s=>s.category))];
 
-  createButton("🌍 TODOS", "all");
+  createButton("🌍 TODOS", "all", allSoftware.length);
 
   categories.forEach(cat=>{
-    createButton(`${getCategoryIcon(cat)} ${cat.toUpperCase()}`, cat);
+    const count=allSoftware.filter(s=>s.category===cat).length;
+    createButton(`${getCategoryIcon(cat)} ${cat.toUpperCase()}`, cat, count);
   });
 }
 
-function createButton(text, category){
+function createButton(text, category, count){
 
-  const btn = document.createElement("button");
+  const btn=document.createElement("button");
   btn.className="category-btn";
-  btn.innerText=text;
+  btn.innerText=`${text} (${count})`;
 
   btn.onclick=()=>{
     currentCategory=category;
@@ -100,12 +116,8 @@ function createButton(text, category){
 function updateActive(){
   document.querySelectorAll(".category-btn").forEach(btn=>{
     btn.classList.remove("active-category");
-
-    if(currentCategory==="all" && btn.innerText.includes("TODOS")){
-      btn.classList.add("active-category");
-    }
-
-    if(btn.innerText.toLowerCase().includes(currentCategory)){
+    if(btn.innerText.toLowerCase().includes(currentCategory) ||
+      (currentCategory==="all" && btn.innerText.includes("TODOS"))){
       btn.classList.add("active-category");
     }
   });
@@ -115,27 +127,31 @@ function filterSoftware(){
   if(currentCategory==="all"){
     renderGallery(allSoftware);
   }else{
-    const filtered=allSoftware.filter(s=>s.category===currentCategory);
-    renderGallery(filtered);
+    renderGallery(allSoftware.filter(s=>s.category===currentCategory));
   }
 }
 
-/* ========================= */
 /* RENDER */
-/* ========================= */
-
 function renderGallery(data){
 
   gallery.innerHTML="";
 
   data.forEach(software=>{
 
+    const favorites=JSON.parse(localStorage.getItem("softwareFavorites"))||[];
+    const isFav=favorites.includes(software.id);
+
     const card=document.createElement("div");
     card.className="software-card";
 
     card.innerHTML=`
 
-      ${software.isNew ? '<div class="badge">NEW</div>' : ''}
+      ${software.isNew?'<div class="badge">NEW</div>':''}
+
+      <button class="software-favorite ${isFav?'active':''}" 
+        data-id="${software.id}">
+        <i class="fa-solid fa-heart"></i>
+      </button>
 
       <div class="software-banner">
         <i class="fa-solid fa-microchip"></i>
@@ -147,12 +163,15 @@ function renderGallery(data){
         <p class="desc">${software.description}</p>
         <p style="font-size:12px;color:#888;">📦 ${software.size}</p>
 
+        <div class="file-type type-${software.fileType}">
+          ${software.typeLabel}
+        </div>
+
         <div class="software-buttons">
           <button class="view-btn"
             data-name="${software.name}"
             data-desc="${software.description}"
-            data-download="${software.download}"
-            data-image="${software.image}">
+            data-download="${software.download}">
             <i class="fa-solid fa-eye"></i> Ver
           </button>
 
@@ -170,46 +189,48 @@ function renderGallery(data){
   });
 }
 
-/* ========================= */
 /* BUSCADOR */
-/* ========================= */
-
-searchInput.addEventListener("input", function(){
-
+searchInput.addEventListener("input",function(){
   const value=this.value.toLowerCase();
-
-  const filtered=allSoftware.filter(s=>
-    s.name.toLowerCase().includes(value)
-  );
-
-  renderGallery(filtered);
+  renderGallery(allSoftware.filter(s=>s.name.toLowerCase().includes(value)));
 });
 
-/* ========================= */
-/* MODAL MEJORADO */
-/* ========================= */
-
+/* EVENTOS */
 document.addEventListener("click", async function(e){
+
+  /* FAVORITO */
+  const favBtn=e.target.closest(".software-favorite");
+  if(favBtn){
+    let favorites=JSON.parse(localStorage.getItem("softwareFavorites"))||[];
+    const id=parseInt(favBtn.dataset.id);
+
+    if(favorites.includes(id)){
+      favorites=favorites.filter(f=>f!==id);
+      favBtn.classList.remove("active");
+    }else{
+      favorites.push(id);
+      favBtn.classList.add("active");
+    }
+
+    localStorage.setItem("softwareFavorites",JSON.stringify(favorites));
+  }
 
   /* VER */
   const viewBtn=e.target.closest(".view-btn");
-
   if(viewBtn){
     document.getElementById("modalTitle").innerText=viewBtn.dataset.name;
     document.getElementById("modalDesc").innerText=viewBtn.dataset.desc;
     document.getElementById("modalDownload").href=viewBtn.dataset.download;
-    document.getElementById("modalImage").src=viewBtn.dataset.image;
+    document.getElementById("modalImage").src="images/logo.png";
     document.getElementById("softwareModal").style.display="flex";
   }
 
   /* DESCARGAR SIN NUEVA PESTAÑA */
   const downloadBtn=e.target.closest(".download-btn");
-
   if(downloadBtn){
-
-    const response = await fetch(downloadBtn.dataset.url);
-    const blob = await response.blob();
-    const blobUrl = URL.createObjectURL(blob);
+    const response=await fetch(downloadBtn.dataset.url);
+    const blob=await response.blob();
+    const blobUrl=URL.createObjectURL(blob);
 
     const link=document.createElement("a");
     link.href=blobUrl;
@@ -224,7 +245,6 @@ document.addEventListener("click", async function(e){
 });
 
 /* CERRAR MODAL */
-
 document.getElementById("closeSoftwareModal").onclick=function(){
   document.getElementById("softwareModal").style.display="none";
 };
