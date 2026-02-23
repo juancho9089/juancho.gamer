@@ -15,28 +15,21 @@ async function init(){
   gallery.innerHTML = "Cargando software...";
 
   const res = await fetch(`https://api.github.com/repos/${USER}/${REPO}/releases`);
-  const releases = await res.json();
-
-  /* 🔥 ORDENAR POR FECHA DE PUBLICACIÓN */
-  releases.sort((a,b)=>{
-  return new Date(b.published_at) - new Date(a.published_at);
-  });
+  let releases = await res.json();
 
   if(!releases.length){
     gallery.innerHTML = "No hay releases disponibles.";
     return;
   }
 
-  /* ORDEN REAL POR VERSION */
+  /* 🔥 ORDENAR SOLO POR FECHA REAL */
   releases.sort((a,b)=>{
-    const getV = name=>{
-      const m = name.match(/v?(\d+(\.\d+)?)/i);
-      return m ? parseFloat(m[1]) : 0;
-    };
-    return getV(b.name) - getV(a.name);
+    return new Date(b.published_at) - new Date(a.published_at);
   });
 
-  allSoftware = releases.map((r,index)=>{
+  const latestDate = releases[0].published_at;
+
+  allSoftware = releases.map((r)=>{
 
     const categoryMatch = r.name.match(/\[(.*?)\]/);
     const category = categoryMatch ? categoryMatch[1].toLowerCase() : "general";
@@ -47,11 +40,11 @@ async function init(){
     let typeLabel="FILE";
 
     if(asset){
-      if(asset.name.endsWith(".zip")){
+      if(asset.name.toLowerCase().endsWith(".zip")){
         fileType="zip";
         typeLabel="ZIP";
       }
-      else if(asset.name.endsWith(".exe")){
+      else if(asset.name.toLowerCase().endsWith(".exe")){
         fileType="exe";
         typeLabel="EXE";
       }
@@ -67,7 +60,7 @@ async function init(){
       date:new Date(r.published_at).toLocaleDateString(),
       fileType:fileType,
       typeLabel:typeLabel,
-      isNew:index===0
+      isNew:r.published_at === latestDate
     };
   });
 
@@ -235,6 +228,7 @@ document.addEventListener("click", function(e){
     document.getElementById("modalTitle").innerText=viewBtn.dataset.name;
     document.getElementById("modalDesc").innerText=viewBtn.dataset.desc;
     document.getElementById("modalDownload").href=viewBtn.dataset.download;
+    document.getElementById("modalDownload").setAttribute("data-url",viewBtn.dataset.download);
     document.getElementById("modalImage").src="images/logo.png";
     document.getElementById("softwareModal").style.display="flex";
   }
@@ -252,10 +246,11 @@ document.getElementById("softwareModal").onclick=function(e){
 };
 
 /* DESCARGAR DESDE MODAL SIN PAGINA BLANCA */
-document.getElementById("modalDownload").addEventListener("click", async function(){
+document.getElementById("modalDownload").addEventListener("click", async function(e){
+
+  e.preventDefault();
 
   const url = this.getAttribute("data-url");
-
   if(!url) return;
 
   const response = await fetch(url);
