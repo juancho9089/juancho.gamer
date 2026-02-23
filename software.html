@@ -29,13 +29,32 @@
 <section>
   <h1>Software</h1>
 
+  <!-- BUSCADOR -->
+  <div style="margin-bottom:20px;">
+    <input type="text" id="softwareSearch"
+      placeholder="🔎 Buscar software..."
+      style="
+        padding:12px 20px;
+        border-radius:10px;
+        border:1px solid #00ffcc;
+        background:#111;
+        color:#00ffcc;
+        width:300px;
+        outline:none;
+        font-weight:bold;">
+  </div>
+
+  <!-- CATEGORÍAS -->
+  <div id="softwareCategoryBar" class="category-bar"></div>
+
+  <!-- GALERÍA -->
   <div id="softwareGallery" class="gallery"></div>
 </section>
 
 <!-- MODAL -->
 <div id="softwareModal" class="modal">
   <div class="modal-content">
-    <span class="close">&times;</span>
+    <span class="close" id="closeSoftwareModal">&times;</span>
     <img id="modalImage">
     <h2 id="modalTitle"></h2>
     <p id="modalDesc"></p>
@@ -46,7 +65,5 @@
 </div>
 
 <script src="js/software.js"></script>
-<script src="js/main.js"></script>
-
 </body>
 </html>
