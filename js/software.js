@@ -14,63 +14,40 @@ async function init(){
 
   gallery.innerHTML = "Cargando software...";
 
-  try{
-    const res = await fetch(`https://api.github.com/repos/${USER}/${REPO}/releases`);
+  const res = await fetch(`https://api.github.com/repos/${USER}/${REPO}/releases`);
+  const releases = await res.json();
 
-    if(!res.ok){
-      gallery.innerHTML = "⚠ GitHub rate limit alcanzado. Espera unos minutos.";
-      return;
-    }
-
-    const releases = await res.json();
-
-    if(!releases.length){
-      gallery.innerHTML = "No hay releases disponibles.";
-      return;
-    }
-
-    allSoftware = releases.map((r,index)=>{
-
-      const categoryMatch = r.name.match(/\[(.*?)\]/);
-      const category = categoryMatch ? categoryMatch[1].toLowerCase() : "general";
-
-      const asset = r.assets[0];
-
-      return {
-        name: r.name.replace(/\[.*?\]/,"").trim(),
-        category: category,
-        description: r.body || "Sin descripción",
-        download: asset?.browser_download_url || "#",
-        size: asset ? (asset.size / (1024*1024)).toFixed(1) + " MB" : "",
-        date: new Date(r.published_at).toLocaleDateString(),
-        isNew: index === 0
-      };
-    });
-
-    createCategories();
-    renderGallery(allSoftware);
-
-  }catch(error){
-    gallery.innerHTML = "Error cargando releases.";
+  if(!releases.length){
+    gallery.innerHTML = "No hay releases disponibles.";
+    return;
   }
+
+  allSoftware = releases.map((r,index)=>{
+
+    const categoryMatch = r.name.match(/\[(.*?)\]/);
+    const category = categoryMatch ? categoryMatch[1].toLowerCase() : "general";
+
+    const asset = r.assets[0];
+
+    return {
+      name: r.name.replace(/\[.*?\]/,"").trim(),
+      category: category,
+      description: r.body || "Sin descripción",
+      download: asset?.browser_download_url || "#",
+      size: asset ? (asset.size / (1024*1024)).toFixed(1) + " MB" : "",
+      date: new Date(r.published_at).toLocaleDateString(),
+      image: "images/logo.png",
+      isNew: index === 0
+    };
+  });
+
+  createCategories();
+  renderGallery(allSoftware);
 }
 
-/* ICONOS AUTOMÁTICOS */
-
-function getCategoryIcon(name){
-
-  const icons = {
-    general: "📦",
-    utilidad: "🛠",
-    herramienta: "🧰",
-    juego: "🎮",
-    autos: "🚗"
-  };
-
-  return icons[name] || "💾";
-}
-
+/* ========================= */
 /* CATEGORÍAS */
+/* ========================= */
 
 function createCategories(){
 
@@ -78,13 +55,11 @@ function createCategories(){
 
   const categories = [...new Set(allSoftware.map(s=>s.category))];
 
-  createButton("🌍 TODOS", "all");
+  createButton("TODOS", "all");
 
   categories.forEach(cat=>{
-    createButton(`${getCategoryIcon(cat)} ${cat.toUpperCase()}`, cat);
+    createButton(cat.toUpperCase(), cat);
   });
-
-  updateActive();
 }
 
 function createButton(text, category){
@@ -103,22 +78,18 @@ function createButton(text, category){
 }
 
 function updateActive(){
-
   document.querySelectorAll(".category-btn").forEach(btn=>{
     btn.classList.remove("active-category");
-
-    if(currentCategory==="all" && btn.innerText.includes("TODOS")){
+    if(btn.innerText.toLowerCase()===currentCategory){
       btn.classList.add("active-category");
     }
-
-    if(btn.innerText.toLowerCase().includes(currentCategory)){
+    if(currentCategory==="all" && btn.innerText==="TODOS"){
       btn.classList.add("active-category");
     }
   });
 }
 
 function filterSoftware(){
-
   if(currentCategory==="all"){
     renderGallery(allSoftware);
   }else{
@@ -127,7 +98,9 @@ function filterSoftware(){
   }
 }
 
+/* ========================= */
 /* RENDER */
+/* ========================= */
 
 function renderGallery(data){
 
@@ -172,7 +145,9 @@ function renderGallery(data){
   });
 }
 
+/* ========================= */
 /* BUSCADOR */
+/* ========================= */
 
 searchInput.addEventListener("input", function(){
 
@@ -185,7 +160,9 @@ searchInput.addEventListener("input", function(){
   renderGallery(filtered);
 });
 
+/* ========================= */
 /* MODAL */
+/* ========================= */
 
 document.addEventListener("click", function(e){
 
