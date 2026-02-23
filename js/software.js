@@ -229,8 +229,7 @@ document.addEventListener("click", function(e){
   if(viewBtn){
     document.getElementById("modalTitle").innerText=viewBtn.dataset.name;
     document.getElementById("modalDesc").innerText=viewBtn.dataset.desc;
-    document.getElementById("modalDownload")
-    .setAttribute("data-url", viewBtn.dataset.download);
+    document.getElementById("modalDownload").href=viewBtn.dataset.download;
     document.getElementById("modalImage").src="images/logo.png";
     document.getElementById("softwareModal").style.display="flex";
   }
