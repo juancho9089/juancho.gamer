@@ -635,3 +635,61 @@ canvas{
 .modal-content{
   position:relative;
 }
+
+/* ===== FIX SOFTWARE BADGE & FAVORITO ===== */
+
+.software-card {
+  position: relative;
+}
+
+/* NEW SIEMPRE VISIBLE */
+.software-card .badge{
+  opacity:1 !important;
+  z-index:30;
+  pointer-events:none;
+}
+
+/* CORAZON SIEMPRE VISIBLE */
+.software-favorite{
+  position:absolute;
+  top:10px;
+  right:10px;
+  background:rgba(0,0,0,0.8);
+  border:none;
+  color:#fff;
+  padding:6px 8px;
+  border-radius:50%;
+  cursor:pointer;
+  z-index:30;
+}
+
+.software-favorite.active{
+  color:#ff0055;
+  text-shadow:0 0 10px #ff0055;
+}
+
+/* BADGE TIPO ARCHIVO */
+.file-type{
+  display:inline-block;
+  margin-top:8px;
+  padding:4px 12px;
+  font-size:11px;
+  border-radius:20px;
+  font-weight:bold;
+}
+
+.type-zip{ background:#00ffcc; color:#000; }
+.type-exe{ background:#ffcc00; color:#000; }
+.type-other{ background:#888; color:#000; }
+
+/* FIX CORAZON FUERA DE CARD */
+.software-card{
+  position:relative;
+}
+
+.software-favorite{
+  position:absolute;
+  top:10px;
+  right:10px;
+  z-index:50;
+}

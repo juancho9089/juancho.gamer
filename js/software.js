@@ -22,7 +22,7 @@ async function init(){
     return;
   }
 
-  /* 🔥 ORDEN REAL POR VERSION */
+  /* ORDEN REAL POR VERSION */
   releases.sort((a,b)=>{
     const getV = name=>{
       const m = name.match(/v?(\d+(\.\d+)?)/i);
@@ -70,7 +70,7 @@ async function init(){
   renderGallery(allSoftware);
 }
 
-/* ICONOS CATEGORIA */
+/* ICONOS AUTOMATICOS */
 function getCategoryIcon(name){
   const icons={
     general:"📦",
@@ -90,12 +90,17 @@ function createCategories(){
 
   const categories=[...new Set(allSoftware.map(s=>s.category))];
 
+  const favorites=JSON.parse(localStorage.getItem("softwareFavorites"))||[];
+
   createButton("🌍 TODOS", "all", allSoftware.length);
+  createButton("⭐ FAVORITOS", "favorites", favorites.length);
 
   categories.forEach(cat=>{
     const count=allSoftware.filter(s=>s.category===cat).length;
     createButton(`${getCategoryIcon(cat)} ${cat.toUpperCase()}`, cat, count);
   });
+
+  updateActive();
 }
 
 function createButton(text, category, count){
@@ -116,6 +121,7 @@ function createButton(text, category, count){
 function updateActive(){
   document.querySelectorAll(".category-btn").forEach(btn=>{
     btn.classList.remove("active-category");
+
     if(btn.innerText.toLowerCase().includes(currentCategory) ||
       (currentCategory==="all" && btn.innerText.includes("TODOS"))){
       btn.classList.add("active-category");
@@ -124,9 +130,15 @@ function updateActive(){
 }
 
 function filterSoftware(){
+
   if(currentCategory==="all"){
     renderGallery(allSoftware);
-  }else{
+  }
+  else if(currentCategory==="favorites"){
+    const favorites=JSON.parse(localStorage.getItem("softwareFavorites"))||[];
+    renderGallery(allSoftware.filter(s=>favorites.includes(s.id)));
+  }
+  else{
     renderGallery(allSoftware.filter(s=>s.category===currentCategory));
   }
 }
@@ -175,12 +187,10 @@ function renderGallery(data){
             <i class="fa-solid fa-eye"></i> Ver
           </button>
 
-          <button class="download-btn"
-            data-url="${software.download}"
-            data-name="${software.name}">
+          <a href="${software.download}" class="download-btn">
             <i class="fa-solid fa-download"></i>
             <span>Descargar</span>
-          </button>
+          </a>
         </div>
       </div>
     `;
@@ -196,9 +206,8 @@ searchInput.addEventListener("input",function(){
 });
 
 /* EVENTOS */
-document.addEventListener("click", async function(e){
+document.addEventListener("click", function(e){
 
-  /* FAVORITO */
   const favBtn=e.target.closest(".software-favorite");
   if(favBtn){
     let favorites=JSON.parse(localStorage.getItem("softwareFavorites"))||[];
@@ -213,9 +222,9 @@ document.addEventListener("click", async function(e){
     }
 
     localStorage.setItem("softwareFavorites",JSON.stringify(favorites));
+    createCategories();
   }
 
-  /* VER */
   const viewBtn=e.target.closest(".view-btn");
   if(viewBtn){
     document.getElementById("modalTitle").innerText=viewBtn.dataset.name;
@@ -223,24 +232,6 @@ document.addEventListener("click", async function(e){
     document.getElementById("modalDownload").href=viewBtn.dataset.download;
     document.getElementById("modalImage").src="images/logo.png";
     document.getElementById("softwareModal").style.display="flex";
-  }
-
-  /* DESCARGAR SIN NUEVA PESTAÑA */
-  const downloadBtn=e.target.closest(".download-btn");
-  if(downloadBtn){
-    const response=await fetch(downloadBtn.dataset.url);
-    const blob=await response.blob();
-    const blobUrl=URL.createObjectURL(blob);
-
-    const link=document.createElement("a");
-    link.href=blobUrl;
-    link.download=downloadBtn.dataset.name;
-
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-
-    URL.revokeObjectURL(blobUrl);
   }
 });
 
