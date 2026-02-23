@@ -14,6 +14,20 @@ async function init(){
 
   gallery.innerHTML = "Cargando software...";
 
+  const cached = localStorage.getItem("softwareCache");
+
+  if(cached){
+    allSoftware = JSON.parse(cached);
+    createCategories();
+    renderGallery(allSoftware);
+    return;
+  }
+
+  await fetchReleases();
+}
+
+async function fetchReleases(){
+
   const res = await fetch(`https://api.github.com/repos/${USER}/${REPO}/releases`);
   const releases = await res.json();
 
@@ -36,13 +50,33 @@ async function init(){
       download: asset?.browser_download_url || "#",
       size: asset ? (asset.size / (1024*1024)).toFixed(1) + " MB" : "",
       date: new Date(r.published_at).toLocaleDateString(),
-      image: "images/logo.png",
       isNew: index === 0
     };
   });
 
+  localStorage.setItem("softwareCache", JSON.stringify(allSoftware));
+
   createCategories();
   renderGallery(allSoftware);
+}
+
+/* ========================= */
+/* ICONOS AUTOMÁTICOS */
+/* ========================= */
+
+function getCategoryIcon(name){
+
+  const icons = {
+    utilidad: "🛠",
+    herramienta: "🧰",
+    juego: "🎮",
+    game: "🎮",
+    autos: "🚗",
+    editor: "✏",
+    general: "📦"
+  };
+
+  return icons[name] || "💾";
 }
 
 /* ========================= */
@@ -55,18 +89,21 @@ function createCategories(){
 
   const categories = [...new Set(allSoftware.map(s=>s.category))];
 
-  createButton("TODOS", "all");
+  createButton("🌍 TODOS", "all", allSoftware.length);
 
   categories.forEach(cat=>{
-    createButton(cat.toUpperCase(), cat);
+    const count = allSoftware.filter(s=>s.category===cat).length;
+    createButton(`${getCategoryIcon(cat)} ${cat.toUpperCase()}`, cat, count);
   });
+
+  updateActive();
 }
 
-function createButton(text, category){
+function createButton(text, category, count){
 
   const btn = document.createElement("button");
   btn.className="category-btn";
-  btn.innerText=text;
+  btn.innerText=`${text} (${count})`;
 
   btn.onclick=()=>{
     currentCategory=category;
@@ -78,24 +115,29 @@ function createButton(text, category){
 }
 
 function updateActive(){
+
   document.querySelectorAll(".category-btn").forEach(btn=>{
     btn.classList.remove("active-category");
-    if(btn.innerText.toLowerCase()===currentCategory){
+
+    if(currentCategory==="all" && btn.innerText.includes("TODOS")){
       btn.classList.add("active-category");
     }
-    if(currentCategory==="all" && btn.innerText==="TODOS"){
+
+    if(btn.innerText.toLowerCase().includes(currentCategory)){
       btn.classList.add("active-category");
     }
   });
 }
 
 function filterSoftware(){
-  if(currentCategory==="all"){
-    renderGallery(allSoftware);
-  }else{
-    const filtered=allSoftware.filter(s=>s.category===currentCategory);
-    renderGallery(filtered);
+
+  let filtered = allSoftware;
+
+  if(currentCategory!=="all"){
+    filtered = allSoftware.filter(s=>s.category===currentCategory);
   }
+
+  renderGallery(filtered);
 }
 
 /* ========================= */
@@ -109,7 +151,7 @@ function renderGallery(data){
   data.forEach(software=>{
 
     const card=document.createElement("div");
-    card.className="software-card";
+    card.className="software-card reveal";
 
     card.innerHTML=`
 
@@ -146,22 +188,27 @@ function renderGallery(data){
 }
 
 /* ========================= */
-/* BUSCADOR */
+/* BUSCADOR INTELIGENTE */
 /* ========================= */
 
 searchInput.addEventListener("input", function(){
 
   const value=this.value.toLowerCase();
 
-  const filtered=allSoftware.filter(s=>
-    s.name.toLowerCase().includes(value)
+  let filtered=allSoftware.filter(s=>
+    s.name.toLowerCase().includes(value) ||
+    s.description.toLowerCase().includes(value)
   );
+
+  if(currentCategory!=="all"){
+    filtered=filtered.filter(s=>s.category===currentCategory);
+  }
 
   renderGallery(filtered);
 });
 
 /* ========================= */
-/* MODAL */
+/* MODAL ESTABLE */
 /* ========================= */
 
 document.addEventListener("click", function(e){
