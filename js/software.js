@@ -229,7 +229,8 @@ document.addEventListener("click", function(e){
   if(viewBtn){
     document.getElementById("modalTitle").innerText=viewBtn.dataset.name;
     document.getElementById("modalDesc").innerText=viewBtn.dataset.desc;
-    document.getElementById("modalDownload").href=viewBtn.dataset.download;
+    document.getElementById("modalDownload")
+    .setAttribute("data-url", viewBtn.dataset.download);
     document.getElementById("modalImage").src="images/logo.png";
     document.getElementById("softwareModal").style.display="flex";
   }
@@ -245,3 +246,25 @@ document.getElementById("softwareModal").onclick=function(e){
     this.style.display="none";
   }
 };
+
+/* DESCARGAR DESDE MODAL SIN PAGINA BLANCA */
+document.getElementById("modalDownload").addEventListener("click", async function(){
+
+  const url = this.getAttribute("data-url");
+
+  if(!url) return;
+
+  const response = await fetch(url);
+  const blob = await response.blob();
+  const blobUrl = URL.createObjectURL(blob);
+
+  const link = document.createElement("a");
+  link.href = blobUrl;
+  link.download = url.split("/").pop();
+
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+
+  URL.revokeObjectURL(blobUrl);
+});
