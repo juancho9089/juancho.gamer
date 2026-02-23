@@ -65,7 +65,7 @@ async function loadImages(){
       allImages.push({
         name: img.name,
         category: cat.name,
-        url: `https://raw.githubusercontent.com/${USER}/${REPO}/${BRANCH}/${BASE_PATH}/${cat.name}/${img.name}`,
+        url: `https://cdn.jsdelivr.net/gh/${USER}/${REPO}@${BRANCH}/${BASE_PATH}/${cat.name}/${img.name}`,
         sha: img.sha
       });
     });
