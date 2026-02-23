@@ -17,6 +17,11 @@ async function init(){
   const res = await fetch(`https://api.github.com/repos/${USER}/${REPO}/releases`);
   const releases = await res.json();
 
+  /* 🔥 ORDENAR POR FECHA DE PUBLICACIÓN */
+  releases.sort((a,b)=>{
+  return new Date(b.published_at) - new Date(a.published_at);
+  });
+
   if(!releases.length){
     gallery.innerHTML = "No hay releases disponibles.";
     return;
