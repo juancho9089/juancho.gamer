@@ -15,41 +15,41 @@ canvas.style.zIndex = "-1";
 
 let particles = [];
 
-class Particle{
-  constructor(){
-    this.x = Math.random()*canvas.width;
-    this.y = Math.random()*canvas.height;
-    this.size = Math.random()*2+1;
-    this.speedX = Math.random()*0.5-0.25;
-    this.speedY = Math.random()*0.5-0.25;
+class Particle {
+  constructor() {
+    this.x = Math.random() * canvas.width;
+    this.y = Math.random() * canvas.height;
+    this.size = Math.random() * 2 + 1;
+    this.speedX = Math.random() * 0.5 - 0.25;
+    this.speedY = Math.random() * 0.5 - 0.25;
   }
 
-  update(){
-    this.x+=this.speedX;
-    this.y+=this.speedY;
+  update() {
+    this.x += this.speedX;
+    this.y += this.speedY;
 
-    if(this.x<0 || this.x>canvas.width) this.speedX*=-1;
-    if(this.y<0 || this.y>canvas.height) this.speedY*=-1;
+    if (this.x < 0 || this.x > canvas.width) this.speedX *= -1;
+    if (this.y < 0 || this.y > canvas.height) this.speedY *= -1;
   }
 
-  draw(){
-    ctx.fillStyle="#00ffcc";
+  draw() {
+    ctx.fillStyle = "#00ffcc";
     ctx.beginPath();
-    ctx.arc(this.x,this.y,this.size,0,Math.PI*2);
+    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
     ctx.fill();
   }
 }
 
-function init(){
-  particles=[];
-  for(let i=0;i<80;i++){
+function init() {
+  particles = [];
+  for (let i = 0; i < 80; i++) {
     particles.push(new Particle());
   }
 }
 
-function animate(){
-  ctx.clearRect(0,0,canvas.width,canvas.height);
-  particles.forEach(p=>{
+function animate() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  particles.forEach(p => {
     p.update();
     p.draw();
   });
@@ -59,9 +59,9 @@ function animate(){
 init();
 animate();
 
-window.addEventListener("resize",()=>{
-  canvas.width=window.innerWidth;
-  canvas.height=window.innerHeight;
+window.addEventListener("resize", () => {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
   init();
 });
 
@@ -81,12 +81,12 @@ document.addEventListener("DOMContentLoaded", () => {
   const modalDownload = document.getElementById("modalDownload");
   const closeBtn = document.querySelector(".close");
 
-  if(modal){
+  if (modal) {
 
     document.querySelectorAll(".software-card").forEach(card => {
 
       const viewBtn = card.querySelector(".view");
-      if(!viewBtn) return;
+      if (!viewBtn) return;
 
       viewBtn.addEventListener("click", () => {
 
@@ -104,12 +104,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
     });
 
-    if(closeBtn){
+    if (closeBtn) {
       closeBtn.onclick = () => modal.style.display = "none";
     }
 
     window.onclick = (e) => {
-      if(e.target === modal){
+      if (e.target === modal) {
         modal.style.display = "none";
       }
     };
@@ -121,10 +121,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
   document.querySelectorAll(".download-btn").forEach(btn => {
 
-    btn.addEventListener("click", function(){
+    btn.addEventListener("click", function () {
 
       const span = this.querySelector("span");
-      if(!span) return;
+      if (!span) return;
 
       this.classList.add("downloading");
       span.innerText = "Descargando...";
@@ -150,7 +150,7 @@ document.addEventListener("DOMContentLoaded", () => {
 /* =========================
    CUSTOM CURSOR (RGB ANIMATED)
 ========================= */
-if(window.matchMedia("(pointer: fine)").matches) {
+if (window.matchMedia("(pointer: fine)").matches) {
   const cursorSvg = document.createElement("div");
   cursorSvg.className = "rgb-cursor-svg";
   cursorSvg.innerHTML = `
