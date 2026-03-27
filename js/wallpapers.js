@@ -15,7 +15,7 @@ let currentCategory = "all";
 init();
 
 async function init(){
-
+  updateFavCount();
   gallery.innerHTML = "Cargando wallpapers...";
 
   const cached = localStorage.getItem("wallpaperCache");
@@ -307,6 +307,7 @@ document.addEventListener("click", async function(e){
     }
 
     localStorage.setItem("favorites", JSON.stringify(favorites));
+    updateFavCount();
   }
 
   const viewBtn = e.target.closest(".view-wallpaper");
@@ -326,6 +327,15 @@ document.getElementById("fullscreenModal").onclick=function(e){
     this.style.display="none";
   }
 };
+
+/* ACTUALIZAR CONTADOR DE FAVORITOS */
+function updateFavCount() {
+  const badge = document.getElementById("favCountBadge");
+  if (badge) {
+    const favorites = JSON.parse(localStorage.getItem("favorites")) || [];
+    badge.innerText = favorites.length;
+  }
+}
 
 /* BUSCADOR */
 if(searchInput){

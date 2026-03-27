@@ -2,8 +2,11 @@
 <html>
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Los mejores wallpapers gamer en @JUANCHO.GAMER">
 <title>Wallpapers - @JUANCHO.GAMER</title>
 
+<link rel="preconnect" href="https://cdnjs.cloudflare.com">
 <link rel="stylesheet" href="css/style.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
@@ -23,6 +26,10 @@
     <a href="proyectos.html"><i class="fa-solid fa-gamepad"></i> PROYECTOS</a>
     <a href="videos.html"><i class="fa-solid fa-video"></i> VIDEOS</a>
     <a href="sobre.html"><i class="fa-solid fa-user"></i> SOBRE</a>
+  </div>
+
+  <div class="view-counter" style="margin-left: auto; display: flex; align-items: center; cursor: default; transition: 0.3s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+    <img src="https://hits.sh/juancho.gamer.svg?style=for-the-badge&label=Visitas&color=00ffcc&labelColor=111111" alt="Contador de visitas" style="border-radius: 6px; box-shadow: 0 0 15px rgba(0,255,204,0.5); pointer-events: none;">
   </div>
 </nav>
 
@@ -55,8 +62,14 @@
         background:#111;
         color:#00ffcc;
         cursor:pointer;
-        font-weight:bold;">
+        font-weight:bold;
+        display:inline-flex;
+        align-items:center;
+        justify-content:center;
+        margin:0 auto;
+        gap:8px;">
       ❤️ Ver Favoritos
+      <span id="favCountBadge" style="background:#ff0055; color:#fff; padding:2px 8px; border-radius:12px; font-size:12px;">0</span>
     </button>
   </div>
 
@@ -71,8 +84,8 @@
   <img id="fullscreenImage">
 </div>
 
-<script src="js/main.js"></script>
-<script src="js/wallpapers.js"></script>
+<script src="js/main.js" defer></script>
+<script src="js/wallpapers.js" defer></script>
 
 </body>
 </html>

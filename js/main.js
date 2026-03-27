@@ -146,3 +146,32 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
 });
+
+/* =========================
+   CUSTOM CURSOR (RGB ANIMATED)
+========================= */
+if(window.matchMedia("(pointer: fine)").matches) {
+  const cursorSvg = document.createElement("div");
+  cursorSvg.className = "rgb-cursor-svg";
+  cursorSvg.innerHTML = `
+    <svg width="28" height="28" viewBox="0 0 24 24" style="transform: translate(-4px, -2px);">
+      <path class="rgb-stroke" stroke-width="2.5" d="M4 2 L20 10 L12 13 L9 22 Z" />
+    </svg>
+  `;
+  document.body.appendChild(cursorSvg);
+
+  let mx = 0, my = 0;
+  let ticking = false;
+
+  window.addEventListener("mousemove", (e) => {
+    mx = e.clientX;
+    my = e.clientY;
+    if (!ticking) {
+      window.requestAnimationFrame(() => {
+        cursorSvg.style.transform = `translate(${mx}px, ${my}px)`;
+        ticking = false;
+      });
+      ticking = true;
+    }
+  });
+}
