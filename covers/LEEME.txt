@@ -1,0 +1,7 @@
+PORTADAS DE SOFTWARE
+
+Pon aqui la imagen de cada programa con el MISMO nombre de la etiqueta (tag) de su release en GitHub.
+Ejemplo: si la etiqueta del release es  v14  la imagen se llama  v14.png  (tambien sirve .jpg o .webp).
+
+Si un programa no tiene imagen, la pagina le pone sola una portada con sus iniciales.
+Despues de agregar imagenes, haz doble clic en Subir_Web.bat para publicarlas.

@@ -40,7 +40,7 @@ class Particle {
   }
 }
 
-function init() {
+function initParticles() {
   particles = [];
   for (let i = 0; i < 80; i++) {
     particles.push(new Particle());
@@ -56,13 +56,13 @@ function animate() {
   requestAnimationFrame(animate);
 }
 
-init();
+initParticles();
 animate();
 
 window.addEventListener("resize", () => {
   canvas.width = window.innerWidth;
   canvas.height = window.innerHeight;
-  init();
+  initParticles();
 });
 
 
@@ -159,6 +159,7 @@ if (window.matchMedia("(pointer: fine)").matches) {
     </svg>
   `;
   document.body.appendChild(cursorSvg);
+  document.body.classList.add("custom-cursor-active");
 
   let mx = 0, my = 0;
   let ticking = false;

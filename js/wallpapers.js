@@ -12,66 +12,112 @@ let categories = [];
 let allImages = [];
 let currentCategory = "all";
 
-init();
+/* La caché usa una clave nueva: así se descarta la lista vieja que quedó con imágenes repetidas */
+const CACHE_KEY = "wallpaperCache_v2";
+const CACHE_HOURS = 6;            // pasado este tiempo se vuelve a consultar GitHub
+let loadingWallpapers = false;    // evita que la carga corra dos veces a la vez
 
-async function init(){
-  updateFavCount();
-  gallery.innerHTML = "Cargando wallpapers...";
+initWallpapers();
 
-  const cached = localStorage.getItem("wallpaperCache");
-
-  if(cached){
-    const parsed = JSON.parse(cached);
-    categories = parsed.categories;
-    allImages = parsed.images;
-    createCategoryButtons();
-    renderGallery(allImages);
-    return;
-  }
-
-  await fetchCategories();
+function readCache(){
+  try{
+    localStorage.removeItem("wallpaperCache");
+    const parsed = JSON.parse(localStorage.getItem(CACHE_KEY));
+    if(parsed && Array.isArray(parsed.images) && Array.isArray(parsed.categories) && parsed.images.length){
+      return parsed;
+    }
+  }catch(e){}
+  return null;
 }
 
-async function fetchCategories(){
-
-  const res = await fetch(
-    `https://api.github.com/repos/${USER}/${REPO}/contents/${BASE_PATH}?ref=${BRANCH}`
-  );
-
-  const data = await res.json();
-  categories = data.filter(item => item.type === "dir");
-
-  await loadImages();
-
-  localStorage.setItem("wallpaperCache", JSON.stringify({
-    categories,
-    images: allImages
-  }));
-
+function showWallpapers(){
   createCategoryButtons();
   renderGallery(allImages);
 }
 
-async function loadImages(){
+async function initWallpapers(){
+  updateFavCount();
+  gallery.innerHTML = "Cargando wallpapers...";
 
-  allImages = [];
+  const cached = readCache();
+  const fresh = cached && (Date.now() - (cached.time || 0)) < CACHE_HOURS * 3600 * 1000;
 
-  for(const cat of categories){
+  if(fresh){
+    categories = cached.categories;
+    allImages = cached.images;
+    showWallpapers();
+    return;
+  }
+
+  await fetchCategories(cached);
+}
+
+async function fetchCategories(stale){
+
+  if(loadingWallpapers) return;
+  loadingWallpapers = true;
+
+  try{
+    const res = await fetch(
+      `https://api.github.com/repos/${USER}/${REPO}/contents/${BASE_PATH}?ref=${BRANCH}`
+    );
+    const data = await res.json();
+    if(!Array.isArray(data)) throw new Error("GitHub no respondió la lista");
+
+    const newCategories = data.filter(item => item.type === "dir");
+    const newImages = await loadImages(newCategories);
+
+    categories = newCategories;
+    allImages = newImages;
+
+    localStorage.setItem(CACHE_KEY, JSON.stringify({
+      time: Date.now(),
+      categories,
+      images: allImages
+    }));
+
+    showWallpapers();
+
+  }catch(e){
+    /* Si GitHub falla (por ejemplo, límite de consultas), se usa la última lista guardada */
+    if(stale){
+      categories = stale.categories;
+      allImages = stale.images;
+      showWallpapers();
+    }else{
+      gallery.innerHTML = "No se pudieron cargar los wallpapers. Intenta de nuevo en unos minutos.";
+    }
+  }finally{
+    loadingWallpapers = false;
+  }
+}
+
+async function loadImages(cats){
+
+  const images = [];
+  const seen = new Set();
+
+  for(const cat of cats){
 
     const res = await fetch(cat.url);
     const files = await res.json();
+    if(!Array.isArray(files)) continue;
 
     files.filter(f=>f.type==="file").forEach(img=>{
-      allImages.push({
+      const url = `https://cdn.jsdelivr.net/gh/${USER}/${REPO}@${BRANCH}/${BASE_PATH}/${cat.name}/${img.name}`;
+      if(seen.has(url)) return;   // nunca dos veces la misma imagen
+      seen.add(url);
+      images.push({
         name: img.name,
         category: cat.name,
-        url: `https://cdn.jsdelivr.net/gh/${USER}/${REPO}@${BRANCH}/${BASE_PATH}/${cat.name}/${img.name}`,
+        url: url,
         sha: img.sha
       });
     });
   }
 
-  allImages.sort((a,b)=> b.sha.localeCompare(a.sha));
+  images.sort((a,b)=> b.sha.localeCompare(a.sha));
+  return images;
 }
 
 /* ========================= */

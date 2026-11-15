@@ -8,9 +8,9 @@ const searchInput = document.getElementById("softwareSearch");
 let allSoftware = [];
 let currentCategory = "all";
 
-init();
+initSoftware();
 
-async function init(){
+async function initSoftware(){
 
   gallery.innerHTML = "Cargando software...";
 
@@ -34,7 +34,17 @@ async function init(){
     const categoryMatch = r.name.match(/\[(.*?)\]/);
     const category = categoryMatch ? categoryMatch[1].toLowerCase() : "general";
 
-    const asset = r.assets[0];
+    /* El archivo de descarga es el primero que NO sea imagen; una imagen subida al release se usa de portada */
+    const isImage = n => /\.(png|jpe?g|webp|gif)$/i.test(n);
+    const imageAsset = r.assets.find(a => isImage(a.name));
+    const asset = r.assets.find(a => !isImage(a.name)) || r.assets[0];
+
+    /* Portada: 1) imagen subida al release  2) imagen pegada en la descripción  3) covers/<etiqueta>.png|jpg|webp */
+    const bodyImage = (r.body || "").match(/!\[[^\]]*\]\((https?:[^)\s]+)\)/);
+    const covers = [];
+    if(imageAsset) covers.push(imageAsset.browser_download_url);
+    if(bodyImage) covers.push(bodyImage[1]);
+    ["png","jpg","webp"].forEach(ext => covers.push(`covers/${r.tag_name}.${ext}`));
 
     let fileType="other";
     let typeLabel="FILE";
@@ -54,7 +64,8 @@ async function init(){
       id:r.id,
       name:r.name.replace(/\[.*?\]/,"").trim(),
       category:category,
-      description:r.body || "Sin descripción",
+      description:(r.body || "Sin descripción").replace(/!\[[^\]]*\]\([^)]*\)/g,"").trim() || "Sin descripción",
+      covers:covers,
       download:asset?.browser_download_url || "#",
       size:asset ? (asset.size/(1024*1024)).toFixed(1)+" MB" : "",
       date:new Date(r.published_at).toLocaleDateString(),
@@ -163,8 +174,11 @@ function renderGallery(data){
         <i class="fa-solid fa-heart"></i>
       </button>
 
-      <div class="software-banner">
-        <i class="fa-solid fa-microchip"></i>
+      <div class="software-banner" style="--h:${coverHue(software.name)}">
+        <div class="cover-auto">
+          <span class="cover-initials">${coverInitials(software.name)}</span>
+          <span class="cover-cat">${getCategoryIcon(software.category)} ${software.category.toUpperCase()}</span>
+        </div>
       </div>
 
       <div class="software-info">
@@ -194,7 +208,37 @@ function renderGallery(data){
     `;
 
     gallery.appendChild(card);
+    loadCover(card, software.covers);
   });
+}
+
+/* PORTADAS: si no hay imagen, queda la portada automática con las iniciales del programa */
+function coverInitials(name){
+  const words = name.replace(/v?\d+(\.\d+)*$/i,"").split(/[\s_\-]+/).filter(w=>/[a-z0-9]/i.test(w));
+  const text = words.length > 1 ? words[0][0] + words[1][0] : (words[0] || name).slice(0,2);
+  return text.toUpperCase();
+}
+
+function coverHue(name){
+  let h = 0;
+  for(const c of name) h = (h * 31 + c.charCodeAt(0)) % 360;
+  return h;
+}
+
+function loadCover(card, covers){
+  const banner = card.querySelector(".software-banner");
+  const viewBtn = card.querySelector(".view-btn");
+  let i = 0;
+  (function tryNext(){
+    if(!covers || i >= covers.length) return;
+    const url = covers[i++];
+    const img = new Image();
+    img.className = "cover-img";
+    img.alt = "";
+    img.onload = () => { banner.appendChild(img); banner.classList.add("has-img"); viewBtn.dataset.image = url; };
+    img.onerror = tryNext;
+    img.src = url;
+  })();
 }
 
 /* BUSCADOR */
@@ -229,7 +273,7 @@ document.addEventListener("click", function(e){
     document.getElementById("modalDesc").innerText=viewBtn.dataset.desc;
     document.getElementById("modalDownload").href=viewBtn.dataset.download;
     document.getElementById("modalDownload").setAttribute("data-url",viewBtn.dataset.download);
-    document.getElementById("modalImage").src="images/logo.png";
+    document.getElementById("modalImage").src=viewBtn.dataset.image || "images/logo.png";
     document.getElementById("softwareModal").style.display="flex";
   }
 });

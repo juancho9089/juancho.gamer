@@ -788,10 +788,11 @@ canvas{
 
 /* ===== CUSTOM CURSOR ===== */
 @media (pointer: fine) {
-  body * {
+  body.custom-cursor-active * {
     cursor: none !important;
   }
-  input, textarea {
+  body.custom-cursor-active input,
+  body.custom-cursor-active textarea {
     cursor: text !important;
   }
 }
@@ -824,4 +825,68 @@ canvas{
   67% { stroke: #00ff00; }
   84% { stroke: #ffff00; }
   100% { stroke: #ff0000; }
+}
+
+/* ===== PORTADAS DE SOFTWARE (automáticas o con imagen) ===== */
+#softwareGallery{
+  align-items:start;
+}
+
+.software-card{
+  margin:0 auto;
+  width:100%;
+}
+
+.software-banner{
+  position:relative;
+  height:220px;
+  overflow:hidden;
+  border-bottom:1px solid #00ffcc;
+  background:
+    radial-gradient(circle at 30% 20%, hsla(var(--h,170),90%,45%,0.35), transparent 60%),
+    linear-gradient(135deg, hsl(var(--h,170),70%,14%), #0b0b0b 75%);
+}
+
+.cover-auto{
+  position:absolute;
+  inset:0;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:10px;
+}
+
+.cover-initials{
+  font-size:78px;
+  font-weight:900;
+  letter-spacing:2px;
+  line-height:1;
+  color:hsl(var(--h,170),100%,68%);
+  text-shadow:0 0 28px hsla(var(--h,170),100%,50%,0.8);
+}
+
+.cover-cat{
+  font-size:12px;
+  font-weight:bold;
+  letter-spacing:2px;
+  color:#ddd;
+  background:rgba(0,0,0,0.45);
+  border:1px solid hsla(var(--h,170),100%,60%,0.5);
+  padding:4px 12px;
+  border-radius:20px;
+}
+
+.software-banner .cover-img{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  border:0;
+  transition:0.3s;
+}
+
+.software-card:hover .cover-img{
+  transform:scale(1.05);
 }
